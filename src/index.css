@@ -1,0 +1,37 @@
+@import '~antd/dist/antd.css';
+
+body{
+	margin:0;
+	padding:0;
+	font-family:"Hiragino Sans GB", "Microsoft Yahei", "Microsoft Yahei UI", '微软雅黑', 'sans-serif';
+	font-size:14px;
+	min-width:1080px;
+	color:#333;
+}
+::-webkit-scrollbar{width:11px;box-sizing:border-box;background:#ccc;}
+::-webkit-scrollbar-thumb{background-color:#eee;border:1px solid rgba(0, 0, 0, .2);-webkit-border-radius:5px;}
+.bg-gray{background:#ececec;}
+.bg-fff{background:#fff;}
+.color-blue{color:#1890ff;}
+.color-gray{color:#ddd;}
+.text-center{text-align:center;}
+.text-right{text-align:right;}
+.font-14{font-size:14px;}
+.pull-left{float:left;}
+.pull-right{float:right;}
+.mart-30{margin-top:30px;}
+.marb-30{margin-bottom:30px;}
+.mart-60{margin-top:60px;}
+.border-b{border-bottom:1px solid #e8e8e8;}
+.border-r{border-right:1px solid #e8e8e8;}
+
+.ant-layout.dark{background:#f0f0f0;}
+.ant-menu-horizontal.custom-hor{width:1280px;margin:0 auto -1px;}
+.ant-menu-vertical.ant-menu-sub, .ant-menu-horizontal.custom-hor > .ant-menu-submenu{min-width:120px;text-align:center;}
+.ant-menu-horizontal.custom-hor > .ant-menu-item{margin-right:30px;}
+.ant-menu-horizontal.custom-hor > .ant-menu-item-selected{background:#e6f7ff;}
+.center-box{width:1280px;margin:30px auto;}
+.tree-contain{padding:15px;min-width:360px!important;overflow:auto;}
+.tb-contain{padding:30px;}
+.table-fixed table{table-layout:fixed;}
+.flex-initial{flex:initial;}
