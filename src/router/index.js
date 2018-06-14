@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route, browserHistory, IndexRedirect, Redirect } from 'react-router';
 import App from '@/index'
-import User from '@/views/user/User';
+import User from '@/views/layout/User';
 import Employlist from '@/views/employee/Employlist';
 import Trainlist from '@/views/train/Trainlist';
 import Billlist from '@/views/billorder/Billlist';

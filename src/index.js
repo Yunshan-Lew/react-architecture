@@ -19,10 +19,6 @@ class App extends Component {
 	render(){
 		return this.props.children
 	}
-	
-	componentDidMount(){
-		document.title = '易保网'
-	}
 }
 
 ReactDOM.render( (

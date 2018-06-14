@@ -53,6 +53,7 @@ class User extends Component {
 	}
 	
 	componentDidMount(){
+		document.title = 'React Achitecture'
 		this.setState({
 			minH: ( document.documentElement.clientHeight - 108 ) + 'px'
 		})
