@@ -79,9 +79,6 @@ class Trainlist extends Component {
 			success: res => {
 				const pagination = this.state.pagination
 				pagination.total = parseInt(res.data.total)
-				res.data.list.forEach( (item) => {
-					item["key"] = item["train_id"]
-				} )
 				this.setState({
 					loading: false,
 					trains: res.data.list,
@@ -155,7 +152,7 @@ class Trainlist extends Component {
 							}
 						}>新增育成关系</Button>
 					</div>
-					<Table className="table-fixed" columns={ columns } dataSource={ this.state.trains } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } />
+					<Table className="table-fixed" columns={ columns } dataSource={ this.state.trains } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.train_id } />
 					
 					<Modal title="新增育成关系" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.trainAdd.bind(this) } onCancel={ 
 						() => {

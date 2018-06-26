@@ -79,9 +79,6 @@ class Comslist extends Component {
 			success: res => {
 				const pagination = this.state.pagination
 				pagination.total = parseInt(res.data.total)
-				res.data.list.forEach( (item) => {
-					item["key"] = item["commission_id"]
-				} )
 				this.setState({
 					loading: false,
 					commissions: res.data.list,
@@ -106,7 +103,7 @@ class Comslist extends Component {
 						<span className="color-blue">推荐关系链：</span><br/>
 						{ this.props.relation }
 					</p>
-					<Table className="table-fixed" columns={ columns } dataSource={ this.state.commissions } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } />
+					<Table className="table-fixed" columns={ columns } dataSource={ this.state.commissions } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.commission_id } />
 				</Content>
 			</Layout>
 		)

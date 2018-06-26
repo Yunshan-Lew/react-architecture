@@ -109,9 +109,6 @@ class Employlist extends Component {
 			success: res => {
 				const pagination = this.state.pagination
 				pagination.total = parseInt(res.data.total)
-				res.data.list.forEach( (item) => {
-					item["key"] = item["employee_id"]
-				} )
 				this.setState({
 					loading: false,
 					employees: res.data.list,
@@ -238,7 +235,7 @@ class Employlist extends Component {
 							}
 						}>新增员工</Button>
 					</div>
-					<Table className="table-fixed" columns={ this.columns } dataSource={ this.state.employees } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } />
+					<Table className="table-fixed" columns={ this.columns } dataSource={ this.state.employees } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.employee_id } />
 					
 					<Modal title="新增员工" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.employeeAdd.bind(this) } onCancel={ 
 						() => {
