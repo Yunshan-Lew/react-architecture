@@ -67,7 +67,7 @@ class Billlist extends Component {
 		const { AjaxList } = this.props
 		let { order_nid, employee_name } = this.props.listData
 		
-		this.setState({ loading: true });
+		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/billorder/list`,
 			method: 'post',

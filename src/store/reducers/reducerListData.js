@@ -25,7 +25,7 @@ const todos = (state = defaultStore, action) => {
 		const current = parseInt(action.data.current) || state['EMPLOYEE'].current
 		return { ...state, EMPLOYEE: { total, list, current } }
 	}
-	if( action.type === 'TRAIN' ){
+	else if( action.type === 'TRAIN' ){
 		const total = parseInt(action.data.total) || state['TRAIN'].total
 		const list = action.data.list || state['TRAIN'].list
 		const current = parseInt(action.data.current) || state['TRAIN'].current
