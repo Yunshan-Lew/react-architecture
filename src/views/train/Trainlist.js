@@ -11,6 +11,7 @@ const { Sider, Content } = Layout
 const TreeNode = Tree.TreeNode
 const FormItem = Form.Item
 const Option = Select.Option
+const sign = 'TRAIN'
 
 const columns = [{
 	title: '序号',
@@ -39,11 +40,6 @@ class Trainlist extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			trains: [ ],
-			pagination: {
-				current: 1,
-				pageSize: 10
-			},
 			loading: false,
 			
 			modalV: false,
@@ -54,38 +50,36 @@ class Trainlist extends Component {
 		}
 	}
 	
-	handleTableChange(pageC, filters, sorter){
-		const pager = this.state.pagination
-		pager.current = pageC.current
-		
-		this.setState({
-			pagination: pager
-		})
-		
-		this.pullData()
-	}
-	
 	// 获取表格数据
-	pullData( params = this.state.pagination ){
-		this.setState({ loading: true });
-		let { Ajax } = this.props
-		Ajax({
+	pullData(){
+		this.setState({ loading: true })
+		let { AjaxList } = this.props
+		AjaxList({
 			url: `${ configs.THE_HOST }/train/list`,
 			method: 'post',
-			data: {
-				"current_page": params.current,
-				"page_size": params.pageSize
-			},
+			data: { },
+			sign: sign,
 			success: res => {
-				const pagination = this.state.pagination
-				pagination.total = parseInt(res.data.total)
-				this.setState({
-					loading: false,
-					trains: res.data.list,
-					pagination
-				})
+				this.setState({ loading: false })
 			}
 		})
+	}
+	
+	// 翻页
+	handleTableChange(pageC, filters, sorter){
+		const current = pageC.current
+		
+		const { pushListData } = this.props
+		pushListData(sign, { current })
+		setTimeout(() => { this.pullData() })
+	}
+	
+	// 重置清除
+	resetTable(){
+		const { pushListData } = this.props
+		let current = 1
+		pushListData(sign, { current })
+		setTimeout(() => { this.pullData() })
 	}
 	
 	// 添加育成关系
@@ -152,7 +146,11 @@ class Trainlist extends Component {
 							}
 						}>新增育成关系</Button>
 					</div>
-					<Table className="table-fixed" columns={ columns } dataSource={ this.state.trains } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.train_id } />
+					<Table className="table-fixed" columns={ columns } dataSource={ this.props.listData.list } pagination={{
+						current: this.props.listData.current,
+						pageSize: configs.pageSize,
+						total: this.props.listData.total
+					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.train_id } />
 					
 					<Modal title="新增育成关系" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.trainAdd.bind(this) } onCancel={ 
 						() => {
@@ -185,14 +183,14 @@ class Trainlist extends Component {
 	
 	componentDidMount(){
 		this.props.catchCurrent('nav2-1')
-		this.pullData()
+		this.resetTable()
 		this.pullTrain()
 	}
 }
 
 // lead stores in
 const mapStateToProps = state => ({
-	
+	listData: state.ListData[sign]
 })
 
 // lead actions in

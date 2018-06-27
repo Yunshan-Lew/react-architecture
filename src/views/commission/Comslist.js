@@ -43,7 +43,6 @@ class Comslist extends Component {
 		super(props)
 		this.state = {
 			order_nid: this.props.params.order_nid,
-			employee_name: "",
 			commissions: [ ],
 			pagination: {
 				current: 1,
@@ -65,8 +64,8 @@ class Comslist extends Component {
 	
 	// 获取表格数据
 	pullData( params = this.state.pagination ){
-		this.setState({ loading: true });
-		let { order_nid, employee_name } = this.state
+		this.setState({ loading: true })
+		let { order_nid } = this.state
 		let { Ajax } = this.props
 		Ajax({
 			url: `${ configs.THE_HOST }/commission/list`,
@@ -74,7 +73,7 @@ class Comslist extends Component {
 			data: {
 				"current_page": params.current,
 				"page_size": params.pageSize,
-				...{ order_nid, employee_name }
+				order_nid
 			},
 			success: res => {
 				const pagination = this.state.pagination

@@ -18,7 +18,8 @@ class Billlist extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			trains: [ ],
+			order_nid: "",
+			employee_name: "",
 			loading: false,
 			
 			modalV: false,
@@ -61,59 +62,64 @@ class Billlist extends Component {
 		browserHistory.push({ pathname: `/commission/list/${ order_nid }` })
 	}
 	
-	handleTableChange(pageC, filters, sorter){
-		const pager = this.props.listData.pagination
-		pager.current = pageC.current
-		
-		const { pushListData } = this.props
-		pushListData(sign, { ...this.props.listData, pagination: pager })
-		
-		this.pullData()
-	}
-	
 	// 获取表格数据
-	pullData(act){
-		const { pushListData, Ajax } = this.props
-		if( act === 'search' ){
-			let pager = this.props.listData.pagination
-			pager.current = 1
-			pushListData(sign, { ...this.props.listData, pagination: pager })
-		}
-		if( act === 'reset' ){
-			let pager = this.props.listData.pagination
-			pager.current = 1
-			pushListData(sign, { pagination: pager, order_nid: "", employee_name: "" })
-			setTimeout(() => { this.pullData() })
-			return
-		}
-		
-		let { order_nid, employee_name, pagination } = this.props.listData
+	pullData(){
+		const { AjaxList } = this.props
+		let { order_nid, employee_name } = this.props.listData
 		
 		this.setState({ loading: true });
-		Ajax({
+		AjaxList({
 			url: `${ configs.THE_HOST }/billorder/list`,
 			method: 'post',
 			data: {
-				"current_page": pagination.current,
-				"page_size": pagination.pageSize,
 				order_nid, employee_name
 			},
+			sign: sign,
 			success: res => {
-				const pager = this.props.listData.pagination
-				pager.total = parseInt(res.data.total)
-				
-				pushListData(sign, { ...this.props.listData, pagination: pager })
-				
-				this.setState({
-					loading: false,
-					trains: res.data.list
-				})
+				this.setState({ loading: false })
 			},
 			fail: res => {
 				this.setState({ loading: false })
 				message.error(res.msg)
 			}
 		})
+	}
+	
+	// 翻页
+	handleTableChange(pageC, filters, sorter){
+		const current = pageC.current
+		
+		const { pushListData } = this.props
+		pushListData(sign, { current })
+		setTimeout(() => { this.pullData() })
+	}
+	
+	// 条件搜索
+	search(){
+		const { pushListData } = this.props
+		let current = 1
+		pushListData(sign, { 
+			current, 
+			employee_name: this.state.employee_name, 
+			order_nid: this.state.order_nid 
+		})
+		setTimeout(() => { this.pullData() })
+	}
+	
+	// 重置清除
+	resetTable(){
+		const { pushListData } = this.props
+		let current = 1
+		pushListData(sign, { 
+			current, 
+			order_nid: "", 
+			employee_name: "" 
+		})
+		this.setState({
+			order_nid: "", 
+			employee_name: "" 
+		})
+		setTimeout(() => { this.pullData() })
 	}
 	
 	// 添加保单
@@ -162,22 +168,21 @@ class Billlist extends Component {
 	}
 	
 	render() {
-		const { pushListData } = this.props
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
 					<Form layout="inline" className="marb-30">
 						<FormItem label="保单编号">
-							<Input placeholder="请输入保单编号" value={ this.props.listData.order_nid } onChange={ (e) => { pushListData(sign, { ...this.props.listData, order_nid: e.target.value }) } } />
+							<Input placeholder="请输入保单编号" value={ this.state.order_nid } onChange={ (e) => { this.setState({ order_nid: e.target.value }) } } />
 						</FormItem>
 						<FormItem label="出单人">
-							<Input placeholder="请输入出单人" value={ this.props.listData.employee_name } onChange={ (e) => { pushListData(sign, { ...this.props.listData, employee_name: e.target.value }) } } />
+							<Input placeholder="请输入出单人" value={ this.state.employee_name } onChange={ (e) => { this.setState({ employee_name: e.target.value }) } } />
 						</FormItem>
 						<FormItem>
-							<Button type="primary" onClick={ this.pullData.bind(this, 'search') }>搜索</Button>
+							<Button type="primary" onClick={ this.search.bind(this) }>搜索</Button>
 						</FormItem>
 						<FormItem>
-							<Button type="default" onClick={ this.pullData.bind(this, 'reset') }>清除</Button>
+							<Button type="default" onClick={ this.resetTable.bind(this) }>清除</Button>
 						</FormItem>
 						<Button icon="plus" type="default" className="pull-right" onClick={
 							() => {
@@ -189,7 +194,11 @@ class Billlist extends Component {
 							}
 						}>新增保单</Button>
 					</Form>
-					<Table className="table-fixed" columns={ this.columns } dataSource={ this.state.trains } pagination={ this.props.listData.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.order_nid } />
+					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{ 
+						current: this.props.listData.current,
+						pageSize: configs.pageSize,
+						total: this.props.listData.total
+					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.order_nid } />
 					
 					<Modal title="新增保单" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.billAdd.bind(this) } onCancel={ 
 						() => {

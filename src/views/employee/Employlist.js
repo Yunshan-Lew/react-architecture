@@ -10,6 +10,7 @@ const { Sider, Content } = Layout
 const TreeNode = Tree.TreeNode
 const FormItem = Form.Item
 const Option = Select.Option
+const sign = 'EMPLOYEE'
 
 class Employlist extends Component {
 	
@@ -84,41 +85,40 @@ class Employlist extends Component {
 		})
 	}
 	
-	handleTableChange(pageC, filters, sorter){
-		const pager = this.state.pagination
-		pager.current = pageC.current
-		
-		this.setState({
-			pagination: pager
-		})
-		
-		this.pullData()
-	}
-	
 	// 获取表格数据
-	pullData( params = this.state.pagination ){
-		this.setState({ loading: true });
-		let { Ajax } = this.props
-		Ajax({
+	pullData(){
+		this.setState({ loading: true })
+		let { AjaxList } = this.props
+		AjaxList({
 			url: `${ configs.THE_HOST }/employee/list`,
 			method: 'post',
-			data: {
-				"current_page": params.current,
-				"page_size": params.pageSize
-			},
+			data: { },
+			sign: sign,
 			success: res => {
-				const pagination = this.state.pagination
-				pagination.total = parseInt(res.data.total)
-				this.setState({
-					loading: false,
-					employees: res.data.list,
-					pagination
-				})
+				this.setState({ loading: false })
 			},
 			fail: res => {
+				this.setState({ loading: false })
 				message.error(res.msg)
 			}
 		})
+	}
+	
+	// 翻页
+	handleTableChange(pageC, filters, sorter){
+		const current = pageC.current
+		
+		const { pushListData } = this.props
+		pushListData(sign, { current })
+		setTimeout(() => { this.pullData() })
+	}
+	
+	// 重置清除
+	resetTable(){
+		const { pushListData } = this.props
+		let current = 1
+		pushListData(sign, { current })
+		setTimeout(() => { this.pullData() })
 	}
 	
 	// 添加员工
@@ -235,7 +235,11 @@ class Employlist extends Component {
 							}
 						}>新增员工</Button>
 					</div>
-					<Table className="table-fixed" columns={ this.columns } dataSource={ this.state.employees } pagination={ this.state.pagination } onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.employee_id } />
+					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{
+						current: this.props.listData.current,
+						pageSize: configs.pageSize,
+						total: this.props.listData.total
+					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.employee_id } />
 					
 					<Modal title="新增员工" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.employeeAdd.bind(this) } onCancel={ 
 						() => {
@@ -292,7 +296,7 @@ class Employlist extends Component {
 	componentDidMount(){
 		this.props.catchCurrent('nav1-1')
 		this.pullTree()
-		this.pullData()
+		this.resetTable()
 		this.pullRanks()
 		this.pullRef()
 	}
@@ -300,7 +304,7 @@ class Employlist extends Component {
 
 // lead stores in
 const mapStateToProps = state => ({
-	
+	listData: state.ListData[sign]
 })
 
 // lead actions in

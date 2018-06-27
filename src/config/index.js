@@ -9,7 +9,8 @@ const configs = {
 		success: [ '0' ],
 		fail: [ '100002', '100003' ],
 		expires: [ '100001' ]
-	}
+	},
+	pageSize: 10
 }
 
 export default configs
