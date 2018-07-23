@@ -2,12 +2,12 @@ const relationInfo = {
 	relation: ''
 }
 
-const todos = (state = relationInfo, action) => {
-	switch (action.type) {
+const todos = (state = relationInfo, { type, relation }) => {
+	switch (type) {
 		case 'PUSH_RELATION':
 			return {
 				...state,
-				relation: action.relation
+				relation: relation
 			}
 		default:
 			return state

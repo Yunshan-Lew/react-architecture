@@ -12,7 +12,7 @@ const EXPIRES = configs.status.expires
 function Ajax(param){
 	return function (dispatch, getState) {
 		
-		const { url, method, data, type, action, success, fail } = param
+		const { url, method, data, action, success, fail } = param
 		
 		return fetch(url, {
 			method: method,

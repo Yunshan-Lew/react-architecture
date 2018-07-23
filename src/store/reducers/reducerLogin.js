@@ -3,8 +3,8 @@ const loginInfo = {
 	logState: false
 }
 
-const todos = (state = loginInfo, action) => {
-	switch (action.type) {
+const todos = (state = loginInfo, { type, token }) => {
+	switch (type) {
 		case 'LOGIN_OUT':
 			return {
 				...state,
@@ -18,12 +18,12 @@ const todos = (state = loginInfo, action) => {
 		case 'PULL_TOKEN':
 			return {
 				...state,
-				token: action.token
+				token: token
 			}
 		case 'PUSH_TOKEN':
 			return {
 				...state,
-				token: action.token
+				token: token
 			}
 		default:
 			return state
