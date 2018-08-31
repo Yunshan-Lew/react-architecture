@@ -26,7 +26,15 @@ function Ajax(param){
 		.then( res => {
 			if( SUCCESS.indexOf(res.code) > -1 && typeof success === 'function' ){
 				success(res)
-				if( !action && typeof action === 'string' ) dispatch(actions[action](res.data))
+				if( !action ) {
+					if( typeof action === 'string' )
+						dispatch(actions[action](res.data))
+					if( Array.isArray(action) ){
+						action.forEach((item) => {
+							dispatch(actions[item](res.data))
+						})
+					}
+				}
 			}
 			else if( FAIL.indexOf(res.code) > -1 && typeof fail === 'function' ){
 				fail(res)
