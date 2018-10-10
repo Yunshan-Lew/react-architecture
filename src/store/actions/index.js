@@ -1,7 +1,6 @@
-import { loginIn, loginOut, pullToken, pushToken } from './actionLogin'
-import { pushRelation } from './actionRelation'
-import { pushListData } from './actionListData'
+import { loginIn, loginOut } from './actionLogin'
+import { pushRelation, pushListData } from './baseActions'
 import Ajax from './Ajax'
 import AjaxList from './AjaxList'
 
-export default { Ajax, AjaxList, loginIn, loginOut, pullToken, pushToken, pushRelation, pushListData }
+export default { Ajax, AjaxList, loginIn, loginOut, pushRelation, pushListData }

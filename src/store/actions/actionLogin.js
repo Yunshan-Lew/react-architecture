@@ -1,12 +1,18 @@
 import cookies from 'browser-cookies'
 
-const loginIn = () => {
+const loginIn = (res) => {
+	const { token } = res
 	cookies.set('logState', 'true', {
 		expires: 7,
 		path: '/'
 	})
+	cookies.set('token', token, {
+		expires: 7,
+		path: '/'
+	})
 	return {
-		type: 'LOGIN_IN'
+		type: 'LOGIN_IN',
+		token: token
 	}
 }
 
@@ -20,23 +26,4 @@ const loginOut = () => {
 	}
 }
 
-const pullToken = () => {
-	let token = cookies.get('token')
-	return {
-		type: 'PULL_TOKEN',
-		token
-	}
-}
-
-const pushToken = (str) => {
-	cookies.set('token', str, {
-		expires: 7,
-		path: '/'
-	})
-	return {
-		type: 'PUSH_TOKEN',
-		token: str
-	}
-}
-
-export { loginIn, loginOut, pullToken, pushToken }
+export { loginIn, loginOut }
