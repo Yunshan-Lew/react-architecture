@@ -109,7 +109,6 @@ class Comslist extends Component {
 	}
 	
 	componentDidMount(){
-		this.props.catchCurrent('nav4-1')
 		this.pullData()
 	}
 }

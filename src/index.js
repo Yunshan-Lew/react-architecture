@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import routers from '@/router';
+import routers from '@/router/router';
 import configureStore from '@/store/configureStore'
 import { Provider } from 'react-redux';
 import reducer from '@/store/reducers';
 import { Layout } from 'antd';
 
-import '@/index.css';
+import '@/style.css';
 import registerServiceWorker from '@/registerServiceWorker';
 
 const store = configureStore();

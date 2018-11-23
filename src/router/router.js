@@ -3,9 +3,9 @@ import { Router, Route, browserHistory, IndexRedirect, Redirect } from 'react-ro
 import App from '@/index'
 import User from '@/views/layout/User';
 import Employlist from '@/views/employee/Employlist';
-import Trainlist from '@/views/train/Trainlist';
+import Trainlist from '@/views/employee/Trainlist';
 import Billlist from '@/views/billorder/Billlist';
-import Comslist from '@/views/commission/Comslist';
+import Comslist from '@/views/billorder/Comslist';
 
 import outRouteHook from '@/utils/outRouteHook';
 import logRouteHook from '@/utils/logRouteHook';
@@ -15,18 +15,12 @@ const routers = (
 		<Route path="/" component={ App } >
 			<Route path="employee" component={ User } onEnter={ logRouteHook } >
 				<Route path="list" component={ Employlist } />
+				<Route path="train" component={ Trainlist } />
 				<IndexRedirect to="/employee/list" />
-			</Route>
-			<Route path="train" component={ User } onEnter={ logRouteHook } >
-				<Route path="list" component={ Trainlist } />
-				<IndexRedirect to="/train/list" />
 			</Route>
 			<Route path="bill" component={ User } onEnter={ logRouteHook } >
 				<Route path="list" component={ Billlist } />
-				<IndexRedirect to="/bill/list" />
-			</Route>
-			<Route path="commission" component={ User } onEnter={ logRouteHook } >
-				<Route path="list/:order_nid" component={ Comslist } />
+				<Route path="commission/:order_nid" component={ Comslist } />
 				<IndexRedirect to="/bill/list" />
 			</Route>
 			// 匹配空

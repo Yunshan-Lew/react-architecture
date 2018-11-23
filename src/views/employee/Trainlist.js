@@ -182,7 +182,6 @@ class Trainlist extends Component {
 	}
 	
 	componentDidMount(){
-		this.props.catchCurrent('nav2-1')
 		this.resetTable()
 		this.pullTrain()
 	}

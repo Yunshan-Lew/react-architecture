@@ -294,7 +294,6 @@ class Employlist extends Component {
 	}
 	
 	componentDidMount(){
-		this.props.catchCurrent('nav1-1')
 		this.pullTree()
 		this.resetTable()
 		this.pullRanks()

@@ -58,13 +58,14 @@ class Billlist extends Component {
 	}
 	
 	direct(order_nid, base_relation){
-		this.props.pushRelation(base_relation)
-		browserHistory.push({ pathname: `/commission/list/${ order_nid }` })
+		let { pushRelation } = this.props.actions
+		pushRelation(base_relation)
+		browserHistory.push({ pathname: `/bill/commission/${ order_nid }` })
 	}
 	
 	// 获取表格数据
 	pullData(){
-		const { AjaxList } = this.props
+		const { AjaxList } = this.props.actions
 		let { order_nid, employee_name } = this.props.listData
 		
 		this.setState({ loading: true })
@@ -89,14 +90,14 @@ class Billlist extends Component {
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
 		
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
 	
 	// 条件搜索
 	search(){
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		let current = 1
 		pushListData(sign, { 
 			current, 
@@ -108,7 +109,7 @@ class Billlist extends Component {
 	
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		let current = 1
 		pushListData(sign, { 
 			current, 
@@ -135,7 +136,7 @@ class Billlist extends Component {
 		}
 		
 		let { biller_name, premium_standard, ep_arr } = this.state
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/billorder/add`,
 			method: 'post',
@@ -154,7 +155,7 @@ class Billlist extends Component {
 	}
 	
 	pullEp() {
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/sysset/train`,
 			method: 'post',
@@ -226,7 +227,6 @@ class Billlist extends Component {
 	}
 	
 	componentDidMount(){
-		this.props.catchCurrent('nav3-1')
 		this.pullData()
 		this.pullEp()
 	}
@@ -238,6 +238,6 @@ const mapStateToProps = state => ({
 })
 
 // lead actions in
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Billlist)

@@ -26,11 +26,8 @@ body{
 .border-r{border-right:1px solid #e8e8e8;}
 
 .ant-layout.dark{background:#f0f0f0;}
-.ant-menu-horizontal.custom-hor{width:1280px;margin:0 auto -1px;}
-.ant-menu-vertical.ant-menu-sub, .ant-menu-horizontal.custom-hor > .ant-menu-submenu{min-width:120px;text-align:center;}
-.ant-menu-horizontal.custom-hor > .ant-menu-item{margin-right:30px;}
-.ant-menu-horizontal.custom-hor > .ant-menu-item-selected{background:#e6f7ff;}
-.center-box{width:1280px;margin:30px auto;}
+.custom-menu .ant-menu-sub.ant-menu-inline > .ant-menu-item{line-height:32px;height:32px;font-size:12px;}
+.center-box{width:auto;margin:0 auto;}
 .tree-contain{padding:15px;min-width:360px!important;overflow:auto;}
 .tb-contain{padding:30px;}
 .table-fixed table{table-layout:fixed;}

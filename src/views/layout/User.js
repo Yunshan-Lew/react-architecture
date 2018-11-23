@@ -4,13 +4,13 @@ import { Layout, Menu, Icon } from 'antd';
 
 const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
-const Content = Layout
+const { Content, Sider } = Layout
 
 class User extends Component {
 	constructor(props){
 		super(props)
 		this.state = {
-			current: 'nav1-1',
+			current: 'employee/list',
 			minH: 'auto'
 		}
 	}
@@ -21,6 +21,12 @@ class User extends Component {
 		})
 	}
 	
+	componentWillReceiveProps(nextProps){
+		let { pathname } = nextProps.location,
+		key = pathname.replace(/^\//, '')
+		this.catchCurrent(key)
+	}
+	
 	componentWillMount(){
 		
 	}
@@ -28,26 +34,34 @@ class User extends Component {
 	render(){
 		return (
 			<Layout className="dark">
-				<Layout className="bg-fff border-b">
-					<Menu selectedKeys={ [this.state.current] } mode="horizontal" className="custom-hor">
-						<Menu.Item key="nav1-1">
-							<Link to="/employee/list">员工列表</Link>
-						</Menu.Item>
-						<Menu.Item key="nav2-1">
-							<Link to="/train/list">育成总览</Link>
-						</Menu.Item>
-						<Menu.Item key="nav3-1">
-							<Link to="/bill/list">保单列表</Link>
-						</Menu.Item>
-					</Menu>
+				<Sider width={ 200 } className="bg-fff">
+					<Layout className="bg-fff border-b">
+						<Menu selectedKeys={ [this.state.current] } defaultOpenKeys={ ['employee', 'bill'] } mode="inline" className="custom-menu">
+							<SubMenu key="employee" title="员工管理">
+								<Menu.Item key="employee/list">
+									<Link to="/employee/list">员工列表</Link>
+								</Menu.Item>
+								<Menu.Item key="employee/train">
+									<Link to="/employee/train">育成总览</Link>
+								</Menu.Item>
+							</SubMenu>
+							<SubMenu key="bill" title="保单管理">
+								<Menu.Item key="bill/list">
+									<Link to="/bill/list">保单列表</Link>
+								</Menu.Item>
+							</SubMenu>
+						</Menu>
+					</Layout>
+				</Sider>
+				<Layout style={{ padding: '24px' }}>
+					<Content className="center-box" style={{ minHeight: this.state.minH }}>
+						{ 
+							this.props.children /*&& React.cloneElement(this.props.children, {
+								catchCurrent: this.catchCurrent.bind(this)
+							})*/
+						}
+					</Content>
 				</Layout>
-				<Content className="center-box" style={{ minHeight: this.state.minH }}>
-					{ 
-						this.props.children && React.cloneElement(this.props.children, {
-							catchCurrent: this.catchCurrent.bind(this)
-						})
-					}
-				</Content>
 			</Layout>
 		)
 	}
@@ -55,7 +69,7 @@ class User extends Component {
 	componentDidMount(){
 		document.title = 'React Achitecture'
 		this.setState({
-			minH: ( document.documentElement.clientHeight - 108 ) + 'px'
+			minH: `${ document.documentElement.clientHeight }px`
 		})
 	}
 }
