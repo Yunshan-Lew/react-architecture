@@ -2,15 +2,18 @@ import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message } from 'antd';
+import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message, DatePicker } from 'antd';
+import locale from 'antd/lib/date-picker/locale/zh_CN'
 import actions from '@/store/actions';
 import nameToId from '@/utils/nameToId';
 import configs from '@/config'
+import Addbillmodal from './addBillModal'
 
 const { Sider, Content } = Layout
 const TreeNode = Tree.TreeNode
 const FormItem = Form.Item
 const Option = Select.Option
+const RangePicker = DatePicker.RangePicker
 const sign = 'BILLORDER'
 
 class Billlist extends Component {
@@ -18,14 +21,8 @@ class Billlist extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			order_nid: "",
-			employee_name: "",
 			loading: false,
-			
-			modalV: false,
-			biller_name: "",
-			premium_standard: "",
-			ep_arr: [ ]
+			modalV: false
 		}
 		this.columns = [{
 			title: '序号',
@@ -66,14 +63,17 @@ class Billlist extends Component {
 	// 获取表格数据
 	pullData(){
 		const { AjaxList } = this.props.actions
-		let { order_nid, employee_name } = this.props.listData
+		let { order_nid, employee_name, date_range_from, date_range_to } = this.props.listData
 		
 		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/billorder/list`,
 			method: 'post',
 			data: {
-				order_nid, employee_name
+				order_nid, 
+				employee_name, 
+				date_range_from,
+				date_range_to
 			},
 			sign: sign,
 			success: res => {
@@ -98,11 +98,11 @@ class Billlist extends Component {
 	// 条件搜索
 	search(){
 		const { pushListData } = this.props.actions
+		const { getFieldsValue } = this.props.form
 		let current = 1
 		pushListData(sign, { 
 			current, 
-			employee_name: this.state.employee_name, 
-			order_nid: this.state.order_nid 
+			...getFieldsValue()
 		})
 		setTimeout(() => { this.pullData() })
 	}
@@ -110,37 +110,25 @@ class Billlist extends Component {
 	// 重置清除
 	resetTable(){
 		const { pushListData } = this.props.actions
+		const { getFieldsValue, resetFields } = this.props.form
+		resetFields()
 		let current = 1
 		pushListData(sign, { 
 			current, 
-			order_nid: "", 
-			employee_name: "" 
-		})
-		this.setState({
-			order_nid: "", 
-			employee_name: "" 
+			...getFieldsValue() 
 		})
 		setTimeout(() => { this.pullData() })
 	}
 	
 	// 添加保单
-	billAdd(){
+	billAdd(params){
 		const _self = this
-		if( this.state.biller_name === "" ){
-			message.error('请选择出单人')
-			return
-		}
-		else if( !/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/.test( this.state.premium_standard ) ){
-			message.error('请正确填写保费')
-			return
-		}
 		
-		let { biller_name, premium_standard, ep_arr } = this.state
 		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/billorder/add`,
 			method: 'post',
-			data: { "employee_id": nameToId(biller_name, ep_arr), premium_standard },
+			data: { ...params },
 			success: res => {
 				message.success(res.msg)
 				_self.setState({
@@ -154,30 +142,26 @@ class Billlist extends Component {
 		})
 	}
 	
-	pullEp() {
-		let { Ajax } = this.props.actions
-		Ajax({
-			url: `${ configs.THE_HOST }/sysset/train`,
-			method: 'post',
-			data: { },
-			success: res => {
-				this.setState({
-					ep_arr: res.data
-				})
-			}
-		})
-	}
-	
 	render() {
+		const { getFieldDecorator } = this.props.form
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
 					<Form layout="inline" className="marb-30">
 						<FormItem label="保单编号">
-							<Input placeholder="请输入保单编号" value={ this.state.order_nid } onChange={ (e) => { this.setState({ order_nid: e.target.value }) } } />
+							{getFieldDecorator('order_nid')(
+								<Input placeholder="请输入保单编号" />
+							)}
 						</FormItem>
 						<FormItem label="出单人">
-							<Input placeholder="请输入出单人" value={ this.state.employee_name } onChange={ (e) => { this.setState({ employee_name: e.target.value }) } } />
+							{getFieldDecorator('employee_name')(
+								<Input placeholder="请输入出单人" />
+							)}
+						</FormItem>
+						<FormItem label="出单日期">
+							{getFieldDecorator('date_range')(
+								<RangePicker locale={ locale } size="default" />
+							)}
 						</FormItem>
 						<FormItem>
 							<Button type="primary" onClick={ this.search.bind(this) }>搜索</Button>
@@ -185,50 +169,35 @@ class Billlist extends Component {
 						<FormItem>
 							<Button type="default" onClick={ this.resetTable.bind(this) }>清除</Button>
 						</FormItem>
+					</Form>
+					<div style={{ height: '60px' }}>
 						<Button icon="plus" type="default" className="pull-right" onClick={
 							() => {
 								this.setState({
-									modalV: true,
-									biller_name: "",
-									premium_standard: ""
+									modalV: true
 								})
 							}
 						}>新增保单</Button>
-					</Form>
+					</div>
 					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{ 
 						current: this.props.listData.current,
 						pageSize: configs.pageSize,
 						total: this.props.listData.total
 					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.order_nid } />
 					
-					<Modal title="新增保单" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.billAdd.bind(this) } onCancel={ 
-						() => {
-							this.setState({
-								modalV: false
-							})
-						}
-					} okText="确定" cancelText="取消" >
-						<Form>
-							<FormItem label="出单人">
-								<Select mode="combobox" value={ this.state.biller_name } onChange={ (value) => { this.setState({ biller_name: value }) } } >
-									{
-										this.state.ep_arr.map( (item, index) => <Option key={ item.employee_id } value={ item.employee_name }>{ item.employee_name }</Option> )
-									}
-								</Select>
-							</FormItem>
-							<FormItem label="标准保费">
-								<Input placeholder="请输入标准保费" value={ this.state.premium_standard } onChange={ (e) => { this.setState({ premium_standard: e.target.value }) } } />
-							</FormItem>
-						</Form>
-					</Modal>
+					<Addbillmodal { ...this.props } visible={ this.state.modalV } addConfirm={ this.billAdd.bind(this) } cancelConfirm={ () => {
+						this.setState({
+							modalV: false
+						})
+					}} />
+					
 				</Content>
 			</Layout>
 		)
 	}
 	
 	componentDidMount(){
-		this.pullData()
-		this.pullEp()
+		this.resetTable() // pullData()
 	}
 }
 
@@ -239,5 +208,7 @@ const mapStateToProps = state => ({
 
 // lead actions in
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+Billlist = Form.create()(Billlist)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Billlist)

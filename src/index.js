@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import reducer from '@/store/reducers';
 import { Layout } from 'antd';
 
-import '@/style.css';
+import '@/style.less';
 import registerServiceWorker from '@/registerServiceWorker';
 
 const store = configureStore();
