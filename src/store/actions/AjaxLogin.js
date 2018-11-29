@@ -9,16 +9,15 @@ const SUCCESS = configs.status.success
 const FAIL = configs.status.fail
 const EXPIRES = configs.status.expires
 
-function Ajax(param){
+function AjaxLogin(param){
 	return function (dispatch, getState) {
 		
-		const { url, method, data, action, success, fail } = param
+		const { method, data, success, fail } = param
 		
-		return fetch(url, {
+		return fetch(`${ configs.THE_HOST }/`, {
 			method: method,
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
 			body: toQueryString( Object.assign( { 
-				"token": getState().loginInfo.token || cookies.get('token') || "", 
 				...configs.defaultParam 
 			}, data ) )
 		})
@@ -26,15 +25,7 @@ function Ajax(param){
 		.then( res => {
 			if( SUCCESS.indexOf(res.code) > -1 && typeof success === 'function' ){
 				success(res)
-				if( !action ) {
-					if( typeof action === 'string' )
-						dispatch(actions[action](res.data))
-					if( Array.isArray(action) ){
-						action.forEach((item) => {
-							dispatch(actions[item](res.data))
-						})
-					}
-				}
+				dispatch(actions['loginIn'](res.data))
 			}
 			else if( FAIL.indexOf(res.code) > -1 && typeof fail === 'function' ){
 				fail(res)
@@ -52,4 +43,4 @@ function Ajax(param){
 	}
 }
 
-export default Ajax
+export default AjaxLogin

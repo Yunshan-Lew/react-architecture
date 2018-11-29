@@ -66,7 +66,7 @@ class Comslist extends Component {
 	pullData( params = this.state.pagination ){
 		this.setState({ loading: true })
 		let { order_nid } = this.state
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/commission/list`,
 			method: 'post',
@@ -119,6 +119,6 @@ const mapStateToProps = state => ({
 })
 
 // lead actions in
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comslist)

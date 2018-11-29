@@ -72,7 +72,7 @@ class Employlist extends Component {
 	
 	// 获取树状结构
 	pullTree(){
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/employee/tree`,
 			method: 'post',
@@ -88,7 +88,7 @@ class Employlist extends Component {
 	// 获取表格数据
 	pullData(){
 		this.setState({ loading: true })
-		let { AjaxList } = this.props
+		let { AjaxList } = this.props.actions
 		AjaxList({
 			url: `${ configs.THE_HOST }/employee/list`,
 			method: 'post',
@@ -108,14 +108,14 @@ class Employlist extends Component {
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
 		
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
 	
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		let current = 1
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
@@ -134,7 +134,7 @@ class Employlist extends Component {
 		}
 		
 		let { employee_name, rank_level, employee_id_reference } = this.state
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/employee/add`,
 			method: 'post',
@@ -159,7 +159,7 @@ class Employlist extends Component {
 		}
 		
 		let { changing, changing_level } = this.state
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/employee/edit`,
 			method: 'post',
@@ -176,7 +176,7 @@ class Employlist extends Component {
 	}
 	
 	pullRanks() {
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/sysset/ranklevel`,
 			method: 'post',
@@ -190,7 +190,7 @@ class Employlist extends Component {
 	}
 	
 	pullRef() {
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/sysset/reference`,
 			method: 'post',
@@ -307,6 +307,6 @@ const mapStateToProps = state => ({
 })
 
 // lead actions in
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Employlist)

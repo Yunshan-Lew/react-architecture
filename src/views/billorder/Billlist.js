@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message, DatePicker } from 'antd';
 import locale from 'antd/lib/date-picker/locale/zh_CN'
 import actions from '@/store/actions';
-import nameToId from '@/utils/nameToId';
 import configs from '@/config'
 import Addbillmodal from './addBillModal'
 
@@ -207,7 +206,7 @@ const mapStateToProps = state => ({
 })
 
 // lead actions in
-const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
 Billlist = Form.create()(Billlist)
 

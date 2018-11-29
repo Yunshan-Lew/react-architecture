@@ -1,7 +1,7 @@
 import cookies from 'browser-cookies'
 
-const loginIn = (res) => {
-	const { token } = res
+const loginIn = (data) => {
+	const { token } = data
 	cookies.set('logState', 'true', {
 		expires: 7,
 		path: '/'
@@ -12,7 +12,7 @@ const loginIn = (res) => {
 	})
 	return {
 		type: 'LOGIN_IN',
-		token: token
+		data
 	}
 }
 
@@ -26,4 +26,15 @@ const loginOut = () => {
 	}
 }
 
-export { loginIn, loginOut }
+const reLogin = (data) => {
+	cookies.set('logState', 'true', {
+		expires: 7,
+		path: '/'
+	})
+	return {
+		type: 'RE_LOGIN',
+		data
+	}
+}
+
+export { loginIn, loginOut, reLogin }

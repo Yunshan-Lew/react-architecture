@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
-import loginTodo from './reducerLogin';
+import loginInfo from './reducerLogin';
 import relationTodo from './reducerRelation';
 import ListData from './reducerListData'
 
 const todoApp = combineReducers({
-	loginTodo,
+	loginInfo,
 	relationTodo,
 	ListData
 })

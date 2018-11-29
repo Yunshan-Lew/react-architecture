@@ -18,7 +18,7 @@ function AjaxList(param){
 			method: method,
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
 			body: toQueryString( Object.assign( { 
-				"token": getState().loginTodo.token || cookies.get('token') || "", 
+				"token": getState().loginInfo.token || cookies.get('token') || "", 
 				...configs.defaultParam, 
 				"current_page": getState().ListData[sign].current, 
 				"page_size": configs.pageSize

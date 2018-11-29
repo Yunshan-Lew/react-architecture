@@ -53,7 +53,7 @@ class Trainlist extends Component {
 	// 获取表格数据
 	pullData(){
 		this.setState({ loading: true })
-		let { AjaxList } = this.props
+		let { AjaxList } = this.props.actions
 		AjaxList({
 			url: `${ configs.THE_HOST }/train/list`,
 			method: 'post',
@@ -69,14 +69,14 @@ class Trainlist extends Component {
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
 		
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
 	
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props
+		const { pushListData } = this.props.actions
 		let current = 1
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
@@ -95,7 +95,7 @@ class Trainlist extends Component {
 		}
 		
 		let { employee_name, employee_name_train, ep_arr, train_arr } = this.state
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/train/add`,
 			method: 'post',
@@ -117,7 +117,7 @@ class Trainlist extends Component {
 	}
 	
 	pullTrain() {
-		let { Ajax } = this.props
+		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/sysset/train`,
 			method: 'post',
@@ -193,6 +193,6 @@ const mapStateToProps = state => ({
 })
 
 // lead actions in
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Trainlist)
