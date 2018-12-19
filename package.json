@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "antd": "^3.1.0",
+    "antd": "^3.8.4",
     "babel-plugin-import": "^1.6.3",
     "browser-cookies": "^1.2.0",
     "less": "^2.7.3",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0",
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
