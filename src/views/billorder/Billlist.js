@@ -88,9 +88,12 @@ class Billlist extends Component {
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
-		
 		const { pushListData } = this.props.actions
-		pushListData(sign, { current })
+		const { getFieldsValue } = this.props.form
+		pushListData(sign, { 
+			current,
+			...getFieldsValue()
+		})
 		setTimeout(() => { this.pullData() })
 	}
 	
