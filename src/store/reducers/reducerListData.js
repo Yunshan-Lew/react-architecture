@@ -41,8 +41,8 @@ const todos = (state = defaultStore, { type, data }) => {
 		const current = data.current || state['BILLORDER'].current
 		const employee_name = typeof data.employee_name === 'undefined' ? '' : data.employee_name 
 		const order_nid = typeof data.order_nid === 'undefined' ? '' : data.order_nid
-		const date_range_from = typeof data.date_range === 'undefined' ? '' : data.date_range[0].format('YYYY-MM-DD')
-		const date_range_to = typeof data.date_range === 'undefined' ? '' : data.date_range[1].format('YYYY-MM-DD')
+		const date_range_from = Array.isArray(data.date_range) && data.date_range.length > 0 ? data.date_range[0].format('YYYY-MM-DD') : ''
+		const date_range_to = Array.isArray(data.date_range) && data.date_range.length > 0 ? data.date_range[1].format('YYYY-MM-DD') : ''
 		return { ...state, BILLORDER: { total, list, current, order_nid, employee_name, date_range_from, date_range_to } }
 	}
 	else {
