@@ -429,5 +429,3 @@ module.exports = {
     child_process: 'empty',
   },
 };
-
-console.log(Object.assign({}, env, Option))
