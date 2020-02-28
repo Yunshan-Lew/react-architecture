@@ -1,7 +1,7 @@
 var Env = process.argv[2];
 console.log(Env)
 var defaults = {
-    FUCK_HOST: 'http://test.ybwcrm.cc'
+    THE_HOST: 'http://test.ybwcrm.cc'
 };
 
 switch (Env) {

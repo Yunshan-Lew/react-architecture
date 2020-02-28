@@ -85,7 +85,6 @@ class User extends Component {
 		this.setState({
 			minH: `${ document.documentElement.clientHeight }px`
 		})
-		console.log(this.props.logState)
 	}
 }
 

@@ -1,5 +1,5 @@
 const configs = {
-	THE_HOST: FUCK_HOST,
+	THE_HOST: THE_HOST,
 	defaultParam: {
 		"roleType": "plat",
 		"terminalType": "pc",

@@ -15,8 +15,9 @@ class Addbillmodal extends Component {
 		}
 	}
 	
-	componentWillUpdate(nextProps){
-		if(nextProps.visible != this.props.visible && nextProps.visible === true) {
+	componentDidUpdate(prevProps, prevState){
+		if(this.props.visible != prevProps.visible && this.props.visible === true) {
+			console.log('done')
 			this.pullEp()
 			this.props.form.resetFields(['employee_id',  'premium_standard'])
 		}
