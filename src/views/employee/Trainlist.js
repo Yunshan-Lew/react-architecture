@@ -61,6 +61,10 @@ class Trainlist extends Component {
 			sign: sign,
 			success: res => {
 				this.setState({ loading: false })
+			},
+			fail: res => {
+				this.setState({ loading: false })
+				message.error(res.msg)
 			}
 		})
 	}

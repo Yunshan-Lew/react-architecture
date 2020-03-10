@@ -11,34 +11,21 @@ const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
 const { Header, Content, Sider } = Layout
 
-class User extends Component {
+class Userlayout extends Component {
 	constructor(props){
 		super(props)
 		this.state = {
-			current: 'employee/list',
 			minH: 'auto'
 		}
 	}
 	
-	catchCurrent(key){
-		this.setState({
-			current: key
-		})
-	}
-	
-	componentWillReceiveProps(nextProps){
-		let { pathname } = nextProps.location,
-		key = pathname.replace(/^\//, '')
-		this.catchCurrent(key)
-	}
-	
-	componentWillMount(){
-		let { pathname } = this.props.location,
-		key = pathname.replace(/^\//, '')
-		this.catchCurrent(key)
+	catchCurrent = () => {
+		let { pathname } = this.props.location
+		return pathname.replace(/^\//, '')
 	}
 	
 	render(){
+		let current = this.catchCurrent()
 		return (
 			<Layout>
 				<Header className="header header-light">
@@ -49,7 +36,7 @@ class User extends Component {
 				<Layout className="dark">
 					<Sider width={ 200 } className="bg-fff">
 						<Layout className="bg-fff border-b">
-							<Menu selectedKeys={ [this.state.current] } defaultOpenKeys={ ['employee', 'bill'] } mode="inline" className="custom-menu">
+							<Menu selectedKeys={ [current] } defaultOpenKeys={ ['employee', 'bill'] } mode="inline" className="custom-menu">
 								<SubMenu key="employee" title="员工管理">
 									<Menu.Item key="employee/list">
 										<Link to="/employee/list">员工列表</Link>
@@ -96,4 +83,4 @@ const mapStateToProps = state => ({
 // lead actions in
 const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
-export default connect(mapStateToProps, mapDispatchToProps)(User)
+export default connect(mapStateToProps, mapDispatchToProps)(Userlayout)

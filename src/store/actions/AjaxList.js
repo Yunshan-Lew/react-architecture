@@ -41,7 +41,7 @@ function AjaxList(param){
 			}
 		} )
 		.catch( error => {
-			console.error(error)
+			typeof fail === 'function' && fail({ msg: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
 		} )
 		
 	}
