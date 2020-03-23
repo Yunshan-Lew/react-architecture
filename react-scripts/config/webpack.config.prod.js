@@ -28,7 +28,7 @@ const publicPath = paths.servedPath;
 // For these, "homepage" can be set to "." to enable relative asset paths.
 const shouldUseRelativeAssetPaths = publicPath === './';
 // Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
+const shouldUseSourceMap = process.argv[2] !== 'onlinebuild';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
@@ -288,8 +288,8 @@ module.exports = {
 											loader: require.resolve('less-loader'),
 											options: {
 												modifyVars:{
-													"@primary-color":"#ff790b", 
-													"@menu-dark-bg":"#febb84", 
+													"@primary-color":"#ff790b",
+													"@menu-dark-bg":"#febb84",
 													"@menu-dark-submenu-bg": "#febb84"
 												}
 											}
@@ -363,7 +363,7 @@ module.exports = {
       },
       mangle: {
         safari10: true,
-      },        
+      },
       output: {
         comments: false,
         // Turned on because emoji and regex is not minified properly using default
