@@ -11,25 +11,24 @@ const EXPIRES = configs.status.expires
 
 function AjaxList(param){
 	return function (dispatch, getState) {
-		
+
 		const { url, method, data, sign, success, fail } = param
-		
+
 		return fetch(url, {
 			method: method,
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: toQueryString( Object.assign( { 
-				"token": getState().loginInfo.token || cookies.get('token') || "", 
-				...configs.defaultParam, 
-				"current_page": getState().ListData[sign].current, 
+			body: toQueryString( Object.assign( {
+				"token": getState().loginInfo.token || cookies.get('token') || "",
+				...configs.defaultParam,
+				"current_page": getState().ListData[sign].current,
 				"page_size": configs.pageSize
 			}, data ) )
 		})
 		.then( res => res.json() )
 		.then( res => {
-			if( SUCCESS.indexOf(res.code) > -1 && typeof success === 'function' ){
-				success(res)
-				if( sign && typeof sign === 'string' )
-					dispatch(actions['pushListData'](sign, { ...res.data, ...data }))
+			if( SUCCESS.indexOf(res.code) > -1 ){
+				if( sign && typeof sign === 'string' ) dispatch(actions['pushListData'](sign, { ...res.data, ...data }))
+				if( typeof success === 'function' ) success(res)
 			}
 			else if( FAIL.indexOf(res.code) > -1 && typeof fail === 'function' ){
 				fail(res)
@@ -43,7 +42,7 @@ function AjaxList(param){
 		.catch( error => {
 			typeof fail === 'function' && fail({ msg: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
 		} )
-		
+
 	}
 }
 

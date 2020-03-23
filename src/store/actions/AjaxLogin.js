@@ -11,21 +11,23 @@ const EXPIRES = configs.status.expires
 
 function AjaxLogin(param){
 	return function (dispatch, getState) {
-		
+
 		const { method, data, success, fail } = param
-		
+
 		return fetch(`${ configs.THE_HOST }/`, {
 			method: method,
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: toQueryString( Object.assign( { 
-				...configs.defaultParam 
+			body: toQueryString( Object.assign( {
+				...configs.defaultParam
 			}, data ) )
 		})
 		.then( res => res.json() )
 		.then( res => {
-			if( SUCCESS.indexOf(res.code) > -1 && typeof success === 'function' ){
-				success(res)
+			if( SUCCESS.indexOf(res.code) > -1 ){
 				dispatch(actions['loginIn'](res.data))
+				if( typeof success === 'function' ) {
+					success(res)
+				}
 			}
 			else if( FAIL.indexOf(res.code) > -1 && typeof fail === 'function' ){
 				fail(res)
@@ -39,7 +41,7 @@ function AjaxLogin(param){
 		.catch( error => {
 			typeof fail === 'function' && fail({ msg: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
 		} )
-		
+
 	}
 }
 

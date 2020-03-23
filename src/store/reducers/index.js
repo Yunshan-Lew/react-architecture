@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import loginInfo from './reducerLogin';
-import relationTodo from './reducerRelation';
+import detailData from './reducerDetail';
 import ListData from './reducerListData'
 
 const todoApp = combineReducers({
 	loginInfo,
-	relationTodo,
+	detailData,
 	ListData
 })
 

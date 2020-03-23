@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import actions from '@/store/actions';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import nameToId from '@/utils/nameToId';
 import configs from '@/config'
 
@@ -36,20 +37,18 @@ const columns = [{
 }]
 
 class Trainlist extends Component {
-	
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			loading: false,
-			
 			modalV: false,
-			employee_name: "",
-			employee_name_train: "",
 			ep_arr: [ ],
 			train_arr: [ ]
 		}
+		this.formForAdd = React.createRef()
 	}
-	
+
 	// 获取表格数据
 	pullData(){
 		this.setState({ loading: true })
@@ -68,16 +67,15 @@ class Trainlist extends Component {
 			}
 		})
 	}
-	
+
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
-		
 		const { pushListData } = this.props.actions
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 重置清除
 	resetTable(){
 		const { pushListData } = this.props.actions
@@ -85,41 +83,46 @@ class Trainlist extends Component {
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 添加育成关系
-	trainAdd(){
-		const _self = this
-		if( this.state.employee_name === "" ){
+	addHandle = () => {
+		this.setState({ modalV: true })
+		let form = this.formForAdd.current
+		form && form.resetFields()
+	}
+
+	trainAdd = () => {
+		let form = this.formForAdd.current,
+		{ employee_name, employee_name_train } = form.getFieldsValue()
+		if( employee_name === "" ){
 			message.error('请选择员工')
 			return
 		}
-		else if( this.state.employee_name_train === "" ){
+		else if( employee_name_train === "" ){
 			message.error('请选择育成人')
 			return
 		}
-		
-		let { employee_name, employee_name_train, ep_arr, train_arr } = this.state
+
+		let { ep_arr, train_arr } = this.state
 		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/train/add`,
 			method: 'post',
-			data: { 
+			data: {
 				"employee_id": nameToId(employee_name, ep_arr),
-				"employee_id_train": nameToId(employee_name_train, train_arr) 
+				"employee_id_train": nameToId(employee_name_train, train_arr)
 			},
 			success: res => {
 				message.success(res.msg)
-				_self.setState({
-					modalV: false
-				})
-				_self.pullData()
+				this.setState({ modalV: false })
+				this.pullData()
 			},
 			fail: res => {
 				message.error(res.msg)
 			}
 		})
 	}
-	
+
 	pullTrain() {
 		let { Ajax } = this.props.actions
 		Ajax({
@@ -134,45 +137,37 @@ class Trainlist extends Component {
 			}
 		})
 	}
-	
+
 	render() {
+		const layout = {
+		  labelCol: { span: 5 },
+		  wrapperCol: { span: 19 }
+		}
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
 					<div className="marb-30">
-						<Button icon="plus" type="default" onClick={
-							() => {
-								this.setState({
-									modalV: true,
-									employee_name: "",
-									employee_name_train: ""
-								})
-							}
-						}>新增育成关系</Button>
+						<Button icon={ <PlusOutlined /> } type="default" onClick={ this.addHandle }>新增育成关系</Button>
 					</div>
 					<Table className="table-fixed" columns={ columns } dataSource={ this.props.listData.list } pagination={{
 						current: this.props.listData.current,
 						pageSize: configs.pageSize,
 						total: this.props.listData.total
 					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.train_id } />
-					
-					<Modal title="新增育成关系" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.trainAdd.bind(this) } onCancel={ 
-						() => {
-							this.setState({
-								modalV: false
-							})
-						}
+
+					<Modal title="新增育成关系" width={ 450 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.trainAdd } onCancel={
+						() => this.setState({ modalV: false })
 					} okText="确定" cancelText="取消" >
-						<Form>
-							<FormItem label="员工姓名">
-								<Select mode="combobox" value={ this.state.employee_name } onChange={ (value) => { this.setState({ employee_name: value }) } }>
+						<Form ref={ this.formForAdd } initialValues={{ employee_name: "", employee_name_train: "" }} { ...layout }>
+							<FormItem label="员工姓名" name="employee_name">
+								<Select mode="combobox">
 									{
 										this.state.ep_arr.map( (item) => <Option key={ item.employee_id } value={ item.employee_name }>{ item.employee_name }</Option> )
 									}
 								</Select>
 							</FormItem>
-							<FormItem label="育成人姓名">
-								<Select mode="combobox" value={ this.state.employee_name_train } onChange={ (value) => { this.setState({ employee_name_train: value }) } }>
+							<FormItem label="育成人姓名" name="employee_name_train">
+								<Select mode="combobox">
 									{
 										this.state.train_arr.map( (item) => <Option key={ item.employee_id } value={ item.employee_name }>{ item.employee_name }</Option> )
 									}
@@ -184,7 +179,7 @@ class Trainlist extends Component {
 			</Layout>
 		)
 	}
-	
+
 	componentDidMount(){
 		this.resetTable()
 		this.pullTrain()

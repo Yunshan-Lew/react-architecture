@@ -3,6 +3,7 @@ import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message } from 'antd';
+import { RollbackOutlined } from '@ant-design/icons';
 import actions from '@/store/actions';
 import configs from '@/config';
 
@@ -38,7 +39,7 @@ const columns = [{
 }]
 
 class Comslist extends Component {
-	
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -51,17 +52,17 @@ class Comslist extends Component {
 			loading: false,
 		}
 	}
-	
+
 	handleTableChange(pageC, filters, sorter){
 		const pager = this.state.pagination
 		pager.current = pageC.current
-		
+
 		this.setState({
 			pagination: pager
 		})
 		this.pullData()
 	}
-	
+
 	// 获取表格数据
 	pullData( params = this.state.pagination ){
 		this.setState({ loading: true })
@@ -83,16 +84,20 @@ class Comslist extends Component {
 					commissions: res.data.list,
 					pagination
 				})
+			},
+			fail: res => {
+				this.setState({ loading: false })
+				message.error(res.msg)
 			}
 		})
 	}
-	
+
 	render() {
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
 					<div className="marb-30">
-						<Button icon="rollback" type="default" onClick={
+						<Button icon={ <RollbackOutlined /> } type="default" onClick={
 							() => {
 								browserHistory.push({ pathname: '/bill/list' })
 							}
@@ -107,7 +112,7 @@ class Comslist extends Component {
 			</Layout>
 		)
 	}
-	
+
 	componentDidMount(){
 		this.pullData()
 	}
@@ -115,7 +120,7 @@ class Comslist extends Component {
 
 // lead stores in
 const mapStateToProps = state => ({
-	relation: state.relationTodo.relation
+	relation: state.detailData.relation
 })
 
 // lead actions in

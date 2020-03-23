@@ -11,29 +11,32 @@ const EXPIRES = configs.status.expires
 
 function Ajax(param){
 	return function (dispatch, getState) {
-		
+
 		const { url, method, data, action, success, fail } = param
-		
+
 		return fetch(url, {
 			method: method,
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: toQueryString( Object.assign( { 
-				"token": getState().loginInfo.token || cookies.get('token') || "", 
-				...configs.defaultParam 
+			body: toQueryString( Object.assign( {
+				"token": getState().loginInfo.token || cookies.get('token') || "",
+				...configs.defaultParam
 			}, data ) )
 		})
 		.then( res => res.json() )
 		.then( res => {
-			if( SUCCESS.indexOf(res.code) > -1 && typeof success === 'function' ){
-				success(res)
-				if( !action ) {
+			let { code, data } = res
+			if( SUCCESS.indexOf(code) > -1 ){
+				if( action && typeof data !== 'undefined' ) {
 					if( typeof action === 'string' )
-						dispatch(actions[action](res.data))
+						dispatch(actions[action](data))
 					if( Array.isArray(action) ){
 						action.forEach((item) => {
-							dispatch(actions[item](res.data))
+							dispatch(actions[item](data))
 						})
 					}
+				}
+				if (typeof success === 'function') {
+					success(res)
 				}
 			}
 			else if( FAIL.indexOf(res.code) > -1 && typeof fail === 'function' ){
@@ -48,7 +51,7 @@ function Ajax(param){
 		.catch( error => {
 			typeof fail === 'function' && fail({ msg: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
 		} )
-		
+
 	}
 }
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import actions from '@/store/actions';
 import configs from '@/config'
 
@@ -13,30 +14,26 @@ const Option = Select.Option
 const sign = 'EMPLOYEE'
 
 class Employlist extends Component {
-	
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			tree: [ ],
 			expand: [ ],
-			
+
 			employees: [ ],
 			pagination: {
 				current: 1,
 				pageSize: 10
 			},
 			loading: false,
-			
+
 			modalV: false,
-			employee_name: "",
-			rank_level: "",
-			employee_id_reference: "0",
 			rank_arr: [ ],
 			ref_arr: [ ],
-			
+
 			modalV2: false,
-			changing: "",
-			changing_level: ""
+			changing: ""
 		}
 		this.columns = [{
 			title: '序号',
@@ -59,17 +56,13 @@ class Employlist extends Component {
 			dataIndex: null,
 			key: '4',
 			render: (text, record) => (
-				<a onClick={ () => {
-					this.setState({
-						changing: record.employee_id,
-						changing_level: record.rank_level_txt,
-						modalV2: true
-					})
-				} } >修改职级</a>
+				<a onClick={ this.changeHandle.bind(this, record.employee_id, record.rank_level_txt) } >修改职级</a>
 			)
 		}]
+		this.formForAdd = React.createRef()
+		this.formForEdit = React.createRef()
 	}
-	
+
 	// 获取树状结构
 	pullTree(){
 		let { Ajax } = this.props.actions
@@ -78,13 +71,11 @@ class Employlist extends Component {
 			method: 'post',
 			data: { },
 			success: res => {
-				this.setState({
-					tree: res.data
-				})
+				this.setState({ tree: res.data })
 			}
 		})
 	}
-	
+
 	// 获取表格数据
 	pullData(){
 		this.setState({ loading: true })
@@ -103,16 +94,15 @@ class Employlist extends Component {
 			}
 		})
 	}
-	
+
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
-		
 		const { pushListData } = this.props.actions
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 重置清除
 	resetTable(){
 		const { pushListData } = this.props.actions
@@ -120,20 +110,26 @@ class Employlist extends Component {
 		pushListData(sign, { current })
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 添加员工
-	employeeAdd(){
-		const _self = this
-		if( this.state.employee_name == "" ){
+	addHandle = () => {
+		this.setState({ modalV: true })
+		let form = this.formForAdd.current
+		form && form.resetFields()
+	}
+
+	employeeAdd = () => {
+		const form = this.formForAdd.current
+		let { employee_name, rank_level, employee_id_reference } = form.getFieldsValue()
+		if( employee_name == "" ){
 			message.error('请填写员工姓名')
 			return
 		}
-		else if( this.state.rank_level == "" ){
+		else if( rank_level == "" ){
 			message.error('请选择职位')
 			return
 		}
-		
-		let { employee_name, rank_level, employee_id_reference } = this.state
+
 		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/employee/add`,
@@ -141,40 +137,46 @@ class Employlist extends Component {
 			data: { employee_name, rank_level, employee_id_reference },
 			success: res => {
 				message.success(res.msg)
-				_self.setState({
-					modalV: false
-				})
-				_self.pullData()
-				_self.pullTree()
+				this.setState({ modalV: false })
+				this.pullData()
+				this.pullTree()
 			}
 		})
 	}
-	
+
 	// 修改员工职级
-	rankChange(){
-		const _self = this
-		if( this.state.changing_level == "" ){
+	changeHandle(ID, TXT){
+		let form = this.formForEdit.current
+		form.setFieldsValue({
+			changing: ID,
+			changing_level: TXT,
+		})
+		this.setState({ modalV2: true })
+	}
+
+	rankChange = () => {
+		const form = this.formForEdit.current
+		let { changing_level } = form.getFieldsValue()
+		if( changing_level == "" ){
 			message.error('请选择职位')
 			return
 		}
-		
-		let { changing, changing_level } = this.state
-		let { Ajax } = this.props.actions
+
+		let { changing } = this.state,
+		{ Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/employee/edit`,
 			method: 'post',
 			data: { "employee_id": changing, "rank_level": changing_level },
 			success: res => {
 				message.success(res.msg)
-				_self.setState({
-					modalV2: false
-				})
-				_self.pullData()
-				_self.pullTree()
+				this.setState({ modalV2: false })
+				this.pullData()
+				this.pullTree()
 			}
 		})
 	}
-	
+
 	pullRanks() {
 		let { Ajax } = this.props.actions
 		Ajax({
@@ -182,13 +184,11 @@ class Employlist extends Component {
 			method: 'post',
 			data: { },
 			success: res => {
-				this.setState({
-					rank_arr: res.data
-				})
+				this.setState({ rank_arr: res.data })
 			}
 		})
 	}
-	
+
 	pullRef() {
 		let { Ajax } = this.props.actions
 		Ajax({
@@ -196,72 +196,50 @@ class Employlist extends Component {
 			method: 'post',
 			data: { },
 			success: res => {
-				this.setState({
-					ref_arr: res.data
-				})
+				this.setState({ ref_arr: res.data })
 			}
 		})
 	}
-	
+
 	render() {
-		const buildTree = arr => arr.map( (item) => {
-			if( item.children && item.children.length ){
-				this.state.expand.push(item.employee_id)
-				return <TreeNode title={ item.employee_name } key={ item.employee_id } >{ buildTree(item.children) }</TreeNode>
-			}
-			else{
-				return <TreeNode title={ item.employee_name } key={ item.employee_id } />
-			}
-		} )
-		
+		const layout = {
+		  labelCol: { span: 5 },
+		  wrapperCol: { span: 19 }
+		}
+
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Sider className="bg-fff tree-contain border-r">
 					<p className="color-blue">员工关系树</p>
-					<Tree showLine defaultExpandedKeys={ this.state.expand } >
-						{ buildTree(this.state.tree) }
-					</Tree>
+					<Tree showLine defaultExpandedKeys={ this.state.expand } treeData={ this.state.tree } />
 				</Sider>
 				<Content className="tb-contain">
 					<div className="marb-30">
-						<Button icon="plus" type="default" onClick={
-							() => {
-								this.setState({
-									modalV: true,
-									employee_name: "",
-									rank_level: "",
-									employee_id_reference: "0"
-								})
-							}
-						}>新增员工</Button>
+						<Button icon={ <PlusOutlined /> } type="default" onClick={ this.addHandle }>新增员工</Button>
 					</div>
 					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{
 						current: this.props.listData.current,
 						pageSize: configs.pageSize,
 						total: this.props.listData.total
 					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.employee_id } />
-					
-					<Modal title="新增员工" width={ 600 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.employeeAdd.bind(this) } onCancel={ 
-						() => {
-							this.setState({
-								modalV: false
-							})
-						}
+
+					<Modal title="新增员工" width={ 450 } visible={ this.state.modalV } maskClosable={ false } onOk={ this.employeeAdd } onCancel={
+						() => this.setState({ modalV: false })
 					} okText="确定" cancelText="取消" >
-						<Form>
-							<FormItem label="员工姓名">
-								<Input placeholder="请输入员工姓名" value={ this.state.employee_name } onChange={ (e) => { this.setState({ employee_name: e.target.value }) } } />
+						<Form ref={ this.formForAdd } initialValues={{ employee_name: "", rank_level: "", employee_id_reference: "0" }} { ...layout }>
+							<FormItem label="员工姓名" name="employee_name">
+								<Input placeholder="请输入员工姓名" />
 							</FormItem>
-							<FormItem label="员工职级">
-								<Select defaultValue={ this.state.rank_level } onChange={ (value) => { this.setState({ rank_level: value }) } }>
+							<FormItem label="员工职级" name="rank_level">
+								<Select>
 									<Option value="">请选择职级</Option>
 									{
 										this.state.rank_arr.map( (item) => <Option key={ item.key } value={ item.key }>{ item.value }</Option> )
 									}
 								</Select>
 							</FormItem>
-							<FormItem label="推荐人">
-								<Select defaultValue={ this.state.employee_id_reference } onChange={ (value) => { this.setState({ employee_id_reference: value }) } }>
+							<FormItem label="推荐人" name="employee_id_reference">
+								<Select>
 									{
 										this.state.ref_arr.map( (item) => <Option key={ item.employee_id } value={ item.employee_id }>{ item.employee_name }</Option> )
 									}
@@ -269,17 +247,13 @@ class Employlist extends Component {
 							</FormItem>
 						</Form>
 					</Modal>
-					
-					<Modal title="修改员工职级" width={ 450 } visible={ this.state.modalV2 } maskClosable={ false } onOk={ this.rankChange.bind(this) } onCancel={ 
-						() => {
-							this.setState({
-								modalV2: false
-							})
-						}
+
+					<Modal title="修改员工职级" width={ 450 } visible={ this.state.modalV2 } maskClosable={ false } onOk={ this.rankChange } onCancel={
+						() => this.setState({ modalV2: false })
 					} okText="确定" cancelText="取消" >
-						<Form>
-							<FormItem label="员工职级">
-								<Select value={ this.state.changing_level } onChange={ (value) => { this.setState({ changing_level: value }) } }>
+						<Form ref={ this.formForEdit } { ...layout }>
+							<FormItem label="员工职级" name="changing_level">
+								<Select>
 									<Option value="">请选择职级</Option>
 									{
 										this.state.rank_arr.map( (item) => <Option key={ item.key } value={ item.key }>{ item.value }</Option> )
@@ -292,7 +266,7 @@ class Employlist extends Component {
 			</Layout>
 		)
 	}
-	
+
 	componentDidMount(){
 		this.pullTree()
 		this.resetTable()

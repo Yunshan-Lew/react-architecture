@@ -3,6 +3,7 @@ import { Link, browserHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message, DatePicker } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/zh_CN'
 import actions from '@/store/actions';
 import configs from '@/config'
@@ -16,7 +17,7 @@ const RangePicker = DatePicker.RangePicker
 const sign = 'BILLORDER'
 
 class Billlist extends Component {
-	
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -51,26 +52,27 @@ class Billlist extends Component {
 				<a onClick={ this.direct.bind(this, record.order_nid, record.base_relation) } >佣金</a>
 			)
 		}]
+		this.searchForm = React.createRef()
 	}
-	
+
 	direct(order_nid, base_relation){
 		let { pushRelation } = this.props.actions
 		pushRelation(base_relation)
 		browserHistory.push({ pathname: `/bill/commission/${ order_nid }` })
 	}
-	
+
 	// 获取表格数据
 	pullData(){
 		const { AjaxList } = this.props.actions
 		let { order_nid, employee_name, date_range_from, date_range_to } = this.props.listData
-		
+
 		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/billorder/list`,
 			method: 'post',
 			data: {
-				order_nid, 
-				employee_name, 
+				order_nid,
+				employee_name,
 				date_range_from,
 				date_range_to
 			},
@@ -84,48 +86,46 @@ class Billlist extends Component {
 			}
 		})
 	}
-	
+
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
 		const current = pageC.current
 		const { pushListData } = this.props.actions
-		const { getFieldsValue } = this.props.form
-		pushListData(sign, { 
+		const form = this.searchForm.current
+		pushListData(sign, {
 			current,
-			...getFieldsValue()
+			...form.getFieldsValue()
 		})
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 条件搜索
 	search(){
 		const { pushListData } = this.props.actions
-		const { getFieldsValue } = this.props.form
+		const form = this.searchForm.current
 		let current = 1
-		pushListData(sign, { 
-			current, 
-			...getFieldsValue()
+		pushListData(sign, {
+			current,
+			...form.getFieldsValue()
 		})
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 重置清除
 	resetTable(){
 		const { pushListData } = this.props.actions
-		const { getFieldsValue, resetFields } = this.props.form
-		resetFields()
+		const form = this.searchForm.current
+		form.resetFields()
 		let current = 1
-		pushListData(sign, { 
-			current, 
-			...getFieldsValue() 
+		pushListData(sign, {
+			current,
+			...form.getFieldsValue()
 		})
 		setTimeout(() => { this.pullData() })
 	}
-	
+
 	// 添加保单
-	billAdd(params){
-		const _self = this
-		
+	billAdd = (params) => {
 		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/billorder/add`,
@@ -133,37 +133,28 @@ class Billlist extends Component {
 			data: { ...params },
 			success: res => {
 				message.success(res.msg)
-				_self.setState({
-					modalV: false
-				})
-				_self.pullData()
+				this.setState({ modalV: false })
+				this.pullData()
 			},
 			fail: res => {
 				message.error(res.msg)
 			}
 		})
 	}
-	
+
 	render() {
-		const { getFieldDecorator } = this.props.form
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
-					<Form layout="inline" className="marb-30">
-						<FormItem label="保单编号">
-							{getFieldDecorator('order_nid')(
-								<Input placeholder="请输入保单编号" />
-							)}
+					<Form layout="inline" ref={ this.searchForm } className="marb-30">
+						<FormItem label="保单编号" name="order_nid">
+							<Input placeholder="请输入保单编号" />
 						</FormItem>
-						<FormItem label="出单人">
-							{getFieldDecorator('employee_name')(
-								<Input placeholder="请输入出单人" />
-							)}
+						<FormItem label="出单人" name="employee_name">
+							<Input placeholder="请输入出单人" />
 						</FormItem>
-						<FormItem label="出单日期">
-							{getFieldDecorator('date_range')(
-								<RangePicker locale={ locale } size="default" />
-							)}
+						<FormItem label="出单日期" name="date_range">
+							<RangePicker locale={ locale } size="default" />
 						</FormItem>
 						<FormItem>
 							<Button type="primary" onClick={ this.search.bind(this) }>搜索</Button>
@@ -173,31 +164,22 @@ class Billlist extends Component {
 						</FormItem>
 					</Form>
 					<div style={{ height: '60px' }}>
-						<Button icon="plus" type="default" className="pull-right" onClick={
-							() => {
-								this.setState({
-									modalV: true
-								})
-							}
+						<Button icon={ <PlusOutlined /> } type="default" className="pull-right" onClick={
+							() => this.setState({ modalV: true })
 						}>新增保单</Button>
 					</div>
-					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{ 
+					<Table className="table-fixed" columns={ this.columns } dataSource={ this.props.listData.list } pagination={{
 						current: this.props.listData.current,
 						pageSize: configs.pageSize,
 						total: this.props.listData.total
 					}} onChange={ this.handleTableChange.bind(this) } loading={ this.state.loading } rowKey={ record => record.order_nid } />
-					
-					<Addbillmodal { ...this.props } visible={ this.state.modalV } addConfirm={ this.billAdd.bind(this) } cancelConfirm={ () => {
-						this.setState({
-							modalV: false
-						})
-					}} />
-					
+
+					<Addbillmodal { ...this.props } visible={ this.state.modalV } addConfirm={ this.billAdd.bind(this) } cancelConfirm={ () => this.setState({ modalV: false }) } />
 				</Content>
 			</Layout>
 		)
 	}
-	
+
 	componentDidMount(){
 		this.resetTable() // pullData()
 	}
@@ -210,7 +192,5 @@ const mapStateToProps = state => ({
 
 // lead actions in
 const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
-
-Billlist = Form.create()(Billlist)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Billlist)
