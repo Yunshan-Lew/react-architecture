@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message, DatePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import locale from 'antd/lib/date-picker/locale/zh_CN'
+import locale from 'antd/es/date-picker/locale/zh_CN'
 import actions from '@/store/actions';
 import configs from '@/config'
 import Addbillmodal from './addBillModal'

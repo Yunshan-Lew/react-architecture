@@ -14,20 +14,20 @@ const { Header, Content, Sider } = Layout
 
 const Userlayout = props => {
 	const [ minH, setMinH ] = useState('auto')
-	
+
 	useEffect(() => {
 		document.title = 'React Achitecture'
-		let { clientHeight } = document.documentElement
-		setMinH(`${ clientHeight > 550 ? clientHeight : 550 }px`)
+		let clientHeight = document.documentElement.clientHeight - 104
+		setMinH(`${ clientHeight > 720 ? clientHeight : 720 }px`)
 	})
-	
+
 	const catchCurrent = () => {
 		let { pathname } = props.location
 		return pathname.replace(/^\//, '')
 	}
-	
+
 	let current = catchCurrent()
-	
+
 	return (
 		<Layout>
 			<Header className="header header-light">
@@ -55,8 +55,8 @@ const Userlayout = props => {
 						</Menu>
 					</Layout>
 				</Sider>
-				<Layout style={{ padding: '24px' }}>
-					<Content className="center-box" style={{ minHeight: minH }}>
+				<Layout style={{ padding: '20px' }}>
+					<Content style={{ minHeight: minH }}>
 						{ props.children }
 					</Content>
 				</Layout>

@@ -18,12 +18,12 @@ class Userlayout extends Component {
 			minH: 'auto'
 		}
 	}
-	
+
 	catchCurrent = () => {
 		let { pathname } = this.props.location
 		return pathname.replace(/^\//, '')
 	}
-	
+
 	render(){
 		let current = this.catchCurrent()
 		return (
@@ -53,9 +53,9 @@ class Userlayout extends Component {
 							</Menu>
 						</Layout>
 					</Sider>
-					<Layout style={{ padding: '24px' }}>
-						<Content className="center-box" style={{ minHeight: this.state.minH }}>
-							{ 
+					<Layout style={{ padding: '20px' }}>
+						<Content style={{ minHeight: this.state.minH }}>
+							{
 								this.props.children /*&& React.cloneElement(this.props.children, {
 									catchCurrent: this.catchCurrent.bind(this)
 								})*/
@@ -66,11 +66,12 @@ class Userlayout extends Component {
 			</Layout>
 		)
 	}
-	
+
 	componentDidMount(){
 		document.title = 'React Achitecture'
+		let clientHeight = document.documentElement.clientHeight - 104
 		this.setState({
-			minH: `${ document.documentElement.clientHeight }px`
+			minH: `${ clientHeight > 720 ? clientHeight : 720 }px`
 		})
 	}
 }
