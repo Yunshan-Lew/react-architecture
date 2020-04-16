@@ -19,6 +19,16 @@ class Userlayout extends Component {
 		}
 	}
 
+	componentDidUpdate(prevProps, prevState){
+		let { pathname } = this.props.location
+		if( pathname !== prevProps.location.pathname ){
+			let clientHeight = document.documentElement.clientHeight - 104
+			this.setState({
+				minH: `${ clientHeight > 720 ? clientHeight : 720 }px`
+			})
+		}
+	}
+
 	catchCurrent = () => {
 		let { pathname } = this.props.location
 		return pathname.replace(/^\//, '')

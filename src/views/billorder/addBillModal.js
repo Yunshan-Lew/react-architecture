@@ -28,7 +28,7 @@ class Addbillmodal extends Component {
 	submitHandle = () => {
 		const form = this.formForBill.current
 		let { employee_id, premium_standard } = form.getFieldsValue()
-		if( employee_id === "" ){
+		if( !employee_id ){
 			message.error('请选择出单人')
 			return
 		}
@@ -60,7 +60,7 @@ class Addbillmodal extends Component {
 		}
 		return (
 			<Modal title="新增保单" width={ 450 } visible={ this.props.visible } maskClosable={ false } onOk={ this.submitHandle } onCancel={ this.props.cancelConfirm } okText="确定" cancelText="取消" >
-				<Form ref={ this.formForBill } { ...layout }>
+				<Form ref={ this.formForBill } { ...layout } initialValues={{ premium_standard: '5000.00' }}>
 					<FormItem label="出单人" name="employee_id" rules={ [{ required: true, message: "必填项"}] }>
 						<Select>
 							{

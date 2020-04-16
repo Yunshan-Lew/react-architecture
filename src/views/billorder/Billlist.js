@@ -7,7 +7,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import actions from '@/store/actions';
 import configs from '@/config'
-import Addbillmodal from './addBillModal'
+import Addbillmodal from './addBillModal2'
 
 const { Sider, Content } = Layout
 const TreeNode = Tree.TreeNode
