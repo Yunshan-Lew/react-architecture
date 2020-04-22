@@ -39,9 +39,7 @@ const Addbillmodal = props => {
 			method: 'post',
 			data: { },
 			success: res => {
-				set_ep_arr({
-					ep_arr: res.data
-				})
+				set_ep_arr(res.data)
 			}
 		})
 	}
