@@ -29,13 +29,13 @@ class Userlayout extends Component {
 		}
 	}
 
-	catchCurrent = () => {
+	get current(){
 		let { pathname } = this.props.location
 		return pathname.replace(/^\//, '')
 	}
 
 	render(){
-		let current = this.catchCurrent()
+		let { current } = this
 		return (
 			<Layout>
 				<Header className="header header-light">

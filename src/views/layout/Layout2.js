@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -21,12 +21,10 @@ const Userlayout = props => {
 		setMinH(`${ clientHeight > 720 ? clientHeight : 720 }px`)
 	})
 
-	const catchCurrent = () => {
+	let current = useMemo(() => {
 		let { pathname } = props.location
 		return pathname.replace(/^\//, '')
-	}
-
-	let current = catchCurrent()
+	}, [props.location])
 
 	return (
 		<Layout>
