@@ -183,6 +183,12 @@ module.exports = {
               presets: [require.resolve('babel-preset-react-app')],
               // @remove-on-eject-end
               compact: true,
+              plugins: [
+                ['import', {
+                  "libraryName": "antd",
+                  "style": 'css'
+                }]
+              ],
             },
           },
           // The notation here is somewhat confusing.

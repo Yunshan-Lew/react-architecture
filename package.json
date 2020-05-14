@@ -1,6 +1,6 @@
 {
   "name": "react-architecture",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "private": true,
   "devDependencies": {
     "antd": "^4.0.3",
