@@ -18,6 +18,7 @@ class Employlist extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+			current_page: 1,
 			tree: [ ],
 			expand: [ ],
 
@@ -78,12 +79,13 @@ class Employlist extends Component {
 
 	// 获取表格数据
 	pullData(){
-		this.setState({ loading: true })
 		let { AjaxList } = this.props.actions
+		let { current_page } = this.state
+		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/employee/list`,
 			method: 'post',
-			data: { },
+			data: { current_page },
 			sign: sign,
 			success: res => {
 				this.setState({ loading: false })
@@ -97,18 +99,15 @@ class Employlist extends Component {
 
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
-		const current = pageC.current
-		const { pushListData } = this.props.actions
-		pushListData(sign, { current })
-		setTimeout(() => { this.pullData() })
+		const { current } = pageC
+		let { pullData } = this
+		return this.setState({ "current_page": current }, pullData)
 	}
 
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props.actions
-		let current = 1
-		pushListData(sign, { current })
-		setTimeout(() => { this.pullData() })
+		let { pullData } = this
+		return this.setState({ "current_page": 1 }, pullData)
 	}
 
 	// 添加员工

@@ -12,7 +12,7 @@ const EXPIRES = configs.status.expires
 function Ajax(param){
 	return function (dispatch, getState) {
 
-		const { url, method, data, action, success, fail } = param
+		const { url, method, data, sign, success, fail } = param
 
 		return fetch(url, {
 			method: method,
@@ -26,12 +26,12 @@ function Ajax(param){
 		.then( res => {
 			let { code, data } = res
 			if( SUCCESS.indexOf(code) > -1 ){
-				if( action && typeof data !== 'undefined' ) {
-					if( typeof action === 'string' )
-						dispatch(actions[action](data))
-					if( Array.isArray(action) ){
-						action.forEach((item) => {
-							dispatch(actions[item](data))
+				if( sign && typeof data !== 'undefined' ) {
+					if( typeof sign === 'string' )
+						dispatch(actions['pushDetailData'](sign, data))
+					if( Array.isArray(sign) ){
+						sign.forEach(item => {
+							dispatch(actions['pushDetailData'](item, data))
 						})
 					}
 				}

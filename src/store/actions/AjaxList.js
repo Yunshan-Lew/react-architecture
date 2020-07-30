@@ -20,7 +20,6 @@ function AjaxList(param){
 			body: toQueryString( Object.assign( {
 				"token": getState().loginInfo.token || cookies.get('token') || "",
 				...configs.defaultParam,
-				"current_page": getState().ListData[sign].current,
 				"page_size": configs.pageSize
 			}, data ) )
 		})

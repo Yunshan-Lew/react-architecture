@@ -1,6 +1,6 @@
-const pushRelation = (str) => {
+const pushDetailData = (sign, data) => {
 	return {
-		type: 'PUSH_RELATION',
+		type: sign,
 		data: str
 	}
 }
@@ -12,4 +12,4 @@ const pushListData = (sign, data) => {
 	}
 }
 
-export { pushRelation, pushListData }
+export { pushDetailData, pushListData }

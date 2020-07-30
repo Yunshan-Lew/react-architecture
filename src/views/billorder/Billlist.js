@@ -22,7 +22,8 @@ class Billlist extends Component {
 		super(props)
 		this.state = {
 			loading: false,
-			modalV: false
+			modalV: false,
+			current_page: 1
 		}
 		this.columns = [{
 			title: '序号',
@@ -55,27 +56,31 @@ class Billlist extends Component {
 		this.searchForm = React.createRef()
 	}
 
-	direct(order_nid, base_relation){
-		let { pushRelation } = this.props.actions
-		pushRelation(base_relation)
-		browserHistory.push({ pathname: `/bill/commission/${ order_nid }` })
+	direct(NID, R){
+		let { pushDetailData } = this.props.actions
+		pushDetailData('relation', R)
+		browserHistory.push({ pathname: `/bill/commission/${ NID }` })
 	}
 
 	// 获取表格数据
-	pullData(){
+	pullData = () => {
 		const { AjaxList } = this.props.actions
-		let { order_nid, employee_name, date_range_from, date_range_to } = this.props.listData
+		const form = this.searchForm.current
+		let { current_page } = this.state
+		let { order_nid, employee_name, date_range } = form.getFieldsValue()
+		let date_range_from = Array.isArray(date_range) && date_range.length ? date_range[0].format('YYYY-MM-DD') : ''
+		let date_range_to = Array.isArray(date_range) && date_range.length ? date_range[1].format('YYYY-MM-DD') : ''
+
+		let postData = { current_page, order_nid, employee_name, date_range_from, date_range_to }
+		Object.keys(postData).forEach(item => {
+			if( postData[item] == '' || typeof postData[item] == 'undefined' ) delete postData[item]
+		})
 
 		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/billorder/list`,
 			method: 'post',
-			data: {
-				order_nid,
-				employee_name,
-				date_range_from,
-				date_range_to
-			},
+			data: postData,
 			sign: sign,
 			success: res => {
 				this.setState({ loading: false })
@@ -89,39 +94,23 @@ class Billlist extends Component {
 
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
-		const current = pageC.current
-		const { pushListData } = this.props.actions
-		const form = this.searchForm.current
-		pushListData(sign, {
-			current,
-			...form.getFieldsValue()
-		})
-		setTimeout(() => { this.pullData() })
+		const { current } = pageC
+		let { pullData } = this
+		return this.setState({ "current_page": current }, pullData)
 	}
 
 	// 条件搜索
 	search(){
-		const { pushListData } = this.props.actions
-		const form = this.searchForm.current
-		let current = 1
-		pushListData(sign, {
-			current,
-			...form.getFieldsValue()
-		})
-		setTimeout(() => { this.pullData() })
+		let { pullData } = this
+		return this.setState({ "current_page": 1 }, pullData)
 	}
 
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props.actions
 		const form = this.searchForm.current
 		form.resetFields()
-		let current = 1
-		pushListData(sign, {
-			current,
-			...form.getFieldsValue()
-		})
-		setTimeout(() => { this.pullData() })
+		let { pullData } = this
+		return this.setState({ "current_page": 1 }, pullData)
 	}
 
 	// 添加保单

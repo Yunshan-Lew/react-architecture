@@ -4,7 +4,7 @@ const detailInfo = {
 
 const todos = (state = detailInfo, { type, data }) => {
 	switch (type) {
-		case 'PUSH_RELATION':
+		case 'relation':
 			return {
 				...state,
 				relation: data

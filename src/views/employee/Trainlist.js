@@ -51,12 +51,13 @@ class Trainlist extends Component {
 
 	// 获取表格数据
 	pullData(){
-		this.setState({ loading: true })
 		let { AjaxList } = this.props.actions
+		let { current_page } = this.state
+		this.setState({ loading: true })
 		AjaxList({
 			url: `${ configs.THE_HOST }/train/list`,
 			method: 'post',
-			data: { },
+			data: { current_page },
 			sign: sign,
 			success: res => {
 				this.setState({ loading: false })
@@ -70,18 +71,15 @@ class Trainlist extends Component {
 
 	// 翻页
 	handleTableChange(pageC, filters, sorter){
-		const current = pageC.current
-		const { pushListData } = this.props.actions
-		pushListData(sign, { current })
-		setTimeout(() => { this.pullData() })
+		const { current } = pageC
+		let { pullData } = this
+		return this.setState({ "current_page": current }, pullData)
 	}
 
 	// 重置清除
 	resetTable(){
-		const { pushListData } = this.props.actions
-		let current = 1
-		pushListData(sign, { current })
-		setTimeout(() => { this.pullData() })
+		let { pullData } = this
+		return this.setState({ "current_page": 1 }, pullData)
 	}
 
 	// 添加育成关系
