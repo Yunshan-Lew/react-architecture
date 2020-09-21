@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, browserHistory } from 'react-router';
 import { Button, Form, Modal, Input, Select, message } from 'antd';
+import Inputamap from '@/components/Inputamap'
 import configs from '@/config'
 
 const FormItem = Form.Item
@@ -48,6 +49,7 @@ const Addbillmodal = props => {
 		labelCol: { span: 5 },
 		wrapperCol: { span: 19 }
 	}
+	let address = form.getFieldValue('address')
 	return (
 		<Modal title="新增保单" width={ 450 } getContainer={ false } visible={ props.visible } maskClosable={ false } onOk={ submitHandle } onCancel={ props.cancelConfirm } okText="确定" cancelText="取消" >
 			<Form form={ form } { ...layout } initialValues={{ premium_standard: '5000.00' }}>
@@ -60,6 +62,9 @@ const Addbillmodal = props => {
 				</FormItem>
 				<FormItem label="标准保费" name="premium_standard" rules={ [{ required: true, message: "必填项"}] }>
 					<Input placeholder="请输入标准保费" />
+				</FormItem>
+				<FormItem label="寄送地址" name="address" rules={ [{ required: true, message: "必填项"}] }>
+					<Inputamap placeholder="请输入邮寄地址" carrier={ 'popover' } value={ address } inputHandle={ address => form.setFieldsValue({ address }) } />
 				</FormItem>
 			</Form>
 		</Modal>
