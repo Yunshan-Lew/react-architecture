@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
 import { Button, Form, Modal, Input, Select, message } from 'antd';
+import Inputamap from '@/components/Inputamap'
 import configs from '@/config'
 
 const FormItem = Form.Item
@@ -53,6 +54,11 @@ class Addbillmodal extends Component {
 		})
 	}
 
+	setAmapValue = address => {
+		let form = this.formForBill.current
+		return form.setFieldsValue({ address })
+	}
+
 	render() {
 		const layout = {
 		  labelCol: { span: 5 },
@@ -70,6 +76,9 @@ class Addbillmodal extends Component {
 					</FormItem>
 					<FormItem label="标准保费" name="premium_standard" rules={ [{ required: true, message: "必填项"}] }>
 						<Input placeholder="请输入标准保费" />
+					</FormItem>
+					<FormItem label="寄送地址" name="address" rules={ [{ required: true, message: "必填项"}] }>
+						<Inputamap placeholder="请输入邮寄地址" carrier="popover" inputHandle={ this.setAmapValue } />
 					</FormItem>
 				</Form>
 			</Modal>
