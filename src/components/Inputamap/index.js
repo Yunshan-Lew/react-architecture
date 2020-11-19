@@ -10,15 +10,15 @@
   创建日期：2020-09-21
 */
 
-import React, { useState, useEffect } from 'react';
-import { Input, Button } from 'antd';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
+import { Input, Button, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Amapmodal from './Amapmodal';
 import Amappopover from './Amappopover';
 
-const { Fragment } = React
+const { Fragment, forwardRef } = React
 
-const Inputamap = props => {
+const Inputamap = forwardRef((props, ref) => {
 	// 组件属性
 	let carrier = props.carrier || 'modal'
 	let value = props.value || {}
@@ -46,6 +46,34 @@ const Inputamap = props => {
 		inputHandle(data)
   }
 
+	const requestExtra = () => {
+    return new Promise((resolve, reject) => {
+      let { lng, lat } = value
+      if( lng && lat ){
+        let geocoder = new AMap.Geocoder()
+        geocoder.getAddress([lng, lat], (status, result) => {
+          if (status === 'complete' && result.regeocode) {
+            let { adcode } = result.regeocode.addressComponent
+            let { province, city, district } = result.regeocode.addressComponent
+            resolve({ adcode: `${ adcode.slice(0,2) + '0000' },${ adcode.slice(0,4) + '00' },${ adcode }`, district: `${ province }-${ city }-${ district }` })
+          }
+          else {
+            message.error('地图未获取到地区，请重新选择')
+            reject()
+          }
+        })
+      }
+      else {
+        message.error('地图未获取到经纬度，请重新选择')
+        reject()
+      }
+    })
+  }
+
+	useImperativeHandle(ref, () => ({
+    requestExtra
+  }))
+
 	return (
 		<Fragment>
 			{
@@ -63,6 +91,6 @@ const Inputamap = props => {
 			}
 		</Fragment>
 	)
-}
+})
 
 export default Inputamap

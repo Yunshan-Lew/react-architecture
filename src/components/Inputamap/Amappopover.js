@@ -126,7 +126,7 @@ const Amappopover = props => {
   return (
 		<Popover title="选择地址" content={
       <Fragment>
-        <Input id={ idForSearch } placeholder="搜索地址" value={ spaceName } />
+        <Input id={ idForSearch } placeholder="搜索地址" value={ spaceName } onChange={ e => setSpaceName(e.target.value) } />
         <div className="popover-amap" id={ idForRender }></div>
         <div className="text-right">
           <Button type="primary" onClick={ submitHandle } size="small" style={{ marginRight: '10px' }}>确定</Button>

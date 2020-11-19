@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, browserHistory } from 'react-router';
 import { Button, Form, Modal, Input, Select, message } from 'antd';
 import Inputamap from '@/components/Inputamap'
@@ -9,6 +9,7 @@ const Option = Select.Option
 
 const Addbillmodal = props => {
 	const [ form ] = Form.useForm()
+	const mapInput = useRef(null)
 
 	const [ ep_arr, set_ep_arr ] = useState([])
 
@@ -20,7 +21,9 @@ const Addbillmodal = props => {
 	}, [ props.visible ])
 
 	// 确认提交
-	const submitHandle = () => {
+	const submitHandle = async () => {
+		let location = await mapInput.current.requestExtra()
+		console.log(location)
 		let { employee_id, premium_standard } = form.getFieldsValue()
 		if( !employee_id ){
 			message.error('请选择出单人')
@@ -63,7 +66,7 @@ const Addbillmodal = props => {
 					<Input placeholder="请输入标准保费" />
 				</FormItem>
 				<FormItem label="寄送地址" name="address" rules={ [{ required: true, message: "必填项"}] }>
-					<Inputamap placeholder="请输入邮寄地址" carrier="popover" inputHandle={ address => form.setFieldsValue({ address }) } />
+					<Inputamap ref={ mapInput } placeholder="请输入邮寄地址" carrier="popover" inputHandle={ address => form.setFieldsValue({ address }) } />
 				</FormItem>
 			</Form>
 		</Modal>

@@ -123,7 +123,7 @@ const Amapmodal = props => {
 
   return (
 		<Modal title="选择地址" width={ 600 } getContainer={ false } visible={ visible } maskClosable={ false } onOk={ submitHandle } onCancel={ cancelConfirm } okText="确定" cancelText="取消" >
-      <Input id={ idForSearch } placeholder="搜索地址" value={ spaceName } style={{ width: '75%' }} />
+      <Input id={ idForSearch } placeholder="搜索地址" value={ spaceName } onChange={ e => setSpaceName(e.target.value) } style={{ width: '75%' }} />
       <div className="container-amap" id={ idForRender }></div>
 		</Modal>
 	)

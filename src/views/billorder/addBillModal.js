@@ -15,6 +15,7 @@ class Addbillmodal extends Component {
 			ep_arr: [ ]
 		}
 		this.formForBill = React.createRef()
+		this.mapInput = React.createRef()
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -26,9 +27,12 @@ class Addbillmodal extends Component {
 	}
 
 	// 确认提交
-	submitHandle = () => {
+	submitHandle = async () => {
 		const form = this.formForBill.current
 		let { employee_id, premium_standard } = form.getFieldsValue()
+		const map = this.mapInput.current
+		let location = await map.requestExtra()
+		console.log(location)
 		if( !employee_id ){
 			message.error('请选择出单人')
 			return
@@ -78,7 +82,7 @@ class Addbillmodal extends Component {
 						<Input placeholder="请输入标准保费" />
 					</FormItem>
 					<FormItem label="寄送地址" name="address" rules={ [{ required: true, message: "必填项"}] }>
-						<Inputamap placeholder="请输入邮寄地址" carrier="popover" inputHandle={ this.setAmapValue } />
+						<Inputamap ref={ this.mapInput } placeholder="请输入邮寄地址" carrier="popover" inputHandle={ this.setAmapValue } />
 					</FormItem>
 				</Form>
 			</Modal>
