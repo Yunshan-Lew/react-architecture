@@ -79,14 +79,14 @@ const Inputamap = forwardRef((props, ref) => {
 			{
 				carrier == 'modal' ?
 				<Fragment>
-					<Input placeholder={ placeholder } suffix={ <SearchOutlined /> } value={ value.spaceName } onClick={ () => setModalV(true) } />
+					<Input placeholder={ placeholder } suffix={ <SearchOutlined /> } value={ value.spaceName } onClick={ () => setModalV(true) } readOnly />
 					<Amapmodal visible={ modalV } initMark={ value } selectConfirm={ addressLocate } cancelConfirm={ () => setModalV(false) } />
 				</Fragment> : null
 			}
 			{
 				carrier == 'popover' ?
 				<Amappopover visible={ modalV } initMark={ value } selectConfirm={ addressLocate } cancelConfirm={ () => setModalV(false) }>
-					<Input placeholder={ placeholder } suffix={ <SearchOutlined /> } value={ value.spaceName } onFocus={ () => setModalV(true) } />
+					<Input placeholder={ placeholder } suffix={ <SearchOutlined /> } value={ value.spaceName } onFocus={ () => setModalV(true) } readOnly />
 				</Amappopover> : null
 			}
 		</Fragment>
