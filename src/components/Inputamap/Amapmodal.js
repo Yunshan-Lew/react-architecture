@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Input } from 'antd';
+import { Button, Modal, Input, message } from 'antd';
 
 const Amapmodal = props => {
   // 组件属性
@@ -70,6 +70,14 @@ const Amapmodal = props => {
       setSpaceName(district + address + name)
       setGeoLocation({ lng, lat })
     })
+    // 标点点击事件
+    AMap.event.addListener(placeSearch, 'markerClick', ({ data }) => {
+      let { pname, cityname, address, name } = data
+      let entr_location = data.entr_location || {}
+      let { lng, lat } = entr_location
+      setSpaceName(pname + cityname + address + name)
+      setGeoLocation({ lng, lat })
+    })
     // 逆向地理编码
     mapInstance.on('click', e => {
       let { lng, lat } = e.lnglat
@@ -94,6 +102,10 @@ const Amapmodal = props => {
 
   const submitHandle = () => {
     let { lng, lat } = geoLocation
+    if( !lng || !lat ) {
+      message.error('未获取到经纬度，请重新选择')
+      return
+    }
     selectConfirm({ spaceName, lng, lat })
   }
 

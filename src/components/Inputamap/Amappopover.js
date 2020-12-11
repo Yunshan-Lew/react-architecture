@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Popover, Input } from 'antd';
+import { Button, Popover, Input, message } from 'antd';
 
 const { Fragment } = React
 
@@ -72,6 +72,14 @@ const Amappopover = props => {
       setSpaceName(district + address + name)
       setGeoLocation({ lng, lat })
     })
+    // 标点点击事件
+    AMap.event.addListener(placeSearch, 'markerClick', ({ data }) => {
+      let { pname, cityname, address, name } = data
+      let entr_location = data.entr_location || {}
+      let { lng, lat } = entr_location
+      setSpaceName(pname + cityname + address + name)
+      setGeoLocation({ lng, lat })
+    })
     // 逆向地理编码
     mapInstance.on('click', e => {
       let { lng, lat } = e.lnglat
@@ -96,6 +104,10 @@ const Amappopover = props => {
 
   const submitHandle = () => {
     let { lng, lat } = geoLocation
+    if( !lng || !lat ) {
+      message.error('未获取到经纬度，请重新选择')
+      return
+    }
     selectConfirm({ spaceName, lng, lat })
   }
 
