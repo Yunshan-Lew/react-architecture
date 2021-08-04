@@ -1,5 +1,5 @@
-import { browserHistory } from 'react-router';
 import fetch from 'isomorphic-fetch';
+import browserHistory from '@/utils/browserHistory';
 import cookies from 'browser-cookies';
 import actions from '@/store/actions';
 import configs from '@/config';

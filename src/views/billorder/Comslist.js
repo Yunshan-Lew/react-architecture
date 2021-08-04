@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, browserHistory } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message } from 'antd';
@@ -43,7 +43,6 @@ class Comslist extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			order_nid: this.props.params.order_nid,
 			commissions: [ ],
 			pagination: {
 				current: 1,
@@ -66,7 +65,7 @@ class Comslist extends Component {
 	// 获取表格数据
 	pullData( params = this.state.pagination ){
 		this.setState({ loading: true })
-		let { order_nid } = this.state
+		let { order_nid } = this.props.match.params
 		let { Ajax } = this.props.actions
 		Ajax({
 			url: `${ configs.THE_HOST }/commission/list`,
@@ -93,13 +92,14 @@ class Comslist extends Component {
 	}
 
 	render() {
+		let { history } = this.props
 		return (
 			<Layout className="bg-fff flex-initial">
 				<Content className="tb-contain">
 					<div className="marb-30">
 						<Button icon={ <RollbackOutlined /> } type="default" onClick={
 							() => {
-								browserHistory.push({ pathname: '/bill/list' })
+								history.push({ pathname: '/bill/list' })
 							}
 						}>返回</Button>
 					</div>
@@ -126,4 +126,4 @@ const mapStateToProps = state => ({
 // lead actions in
 const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Comslist)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Comslist))

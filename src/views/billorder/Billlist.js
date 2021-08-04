@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, browserHistory } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Layout, Table, Tree, Button, Form, Modal, Input, Select, message, DatePicker } from 'antd';
@@ -57,9 +57,9 @@ class Billlist extends Component {
 	}
 
 	direct(NID, R){
-		let { pushDetailData } = this.props.actions
+		let { history, "actions": { pushDetailData } } = this.props
 		pushDetailData('relation', R)
-		browserHistory.push({ pathname: `/bill/commission/${ NID }` })
+		history.push({ pathname: `/bill/commission/${ NID }` })
 	}
 
 	// 获取表格数据
@@ -182,4 +182,4 @@ const mapStateToProps = state => ({
 // lead actions in
 const mapDispatchToProps = dispatch => ({ "actions": bindActionCreators(actions, dispatch) })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Billlist)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Billlist))

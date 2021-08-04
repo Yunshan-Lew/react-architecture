@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, browserHistory } from 'react-router';
 import { Button, Form, Modal, Input, Select, message } from 'antd';
 import Inputamap from '@/components/Inputamap'
 import configs from '@/config'
