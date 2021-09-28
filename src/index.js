@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import routers from '@/router/router';
 import configureStore from '@/store/configureStore'
 import { Provider } from 'react-redux';
-import reducer from '@/store/reducers';
-import { Layout } from 'antd';
 
 import '@/style.less';
 import registerServiceWorker from '@/registerServiceWorker';

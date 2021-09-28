@@ -1,7 +1,7 @@
 const pushDetailData = (sign, data) => {
 	return {
 		type: sign,
-		data: str
+		data: data
 	}
 }
 
