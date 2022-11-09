@@ -7,10 +7,10 @@
     "babel-plugin-import": "^1.6.3",
     "browser-cookies": "^1.2.0",
     "less": "^2.7.3",
-    "less-loader": "^2.2.3",
+    "less-loader": "^11.1.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.0.17",
+    "react-scripts": "5.0.1",
     "redux": "^3.7.2"
   },
   "dependencies": {
